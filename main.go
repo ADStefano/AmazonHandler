@@ -20,6 +20,16 @@ func main() {
 	// for _, item := range objects{
 	// 	log.Printf("Key: %s, LastModified: %s, ETag: %s, Size: %d, StorageClass: %v", *item.Key, *item.LastModified, *item.ETag, *item.Size, item.StorageClass)
 	// }
-	teste.Upload("test", "teste", "/home/angelo/Documentos/Programação/exemplo.html")
+	// teste.Upload("test", "teste", "/home/angelo/Documentos/Programação/exemplo.html")
+	buckets, err := teste.ListBuckets()
+	if err != nil {
+		log.Printf("Erro ao listar buckets: %s", err.Error())
+		return
+	}
+
+	for _, bucket := range buckets {
+		log.Printf("Bucket: %s, Criado em: %s", *bucket.Name, bucket.CreationDate.String())
+	}
+	log.Println("Listagem de buckets concluída com sucesso.")
 
 }

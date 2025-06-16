@@ -8,11 +8,46 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/aws/smithy-go"
 )
 
 // ListBuckets lista os buckets
-func (client *Client) ListBuckets() (string, error) {
-	return "", nil
+func (client *Client) ListBuckets() ([]types.Bucket, error) {
+
+	log.Printf("Buscando buckets...")
+
+	var buckets []types.Bucket
+
+	bucketPaginator := s3.NewListBucketsPaginator(client.s3Client, &s3.ListBucketsInput{})
+
+	for bucketPaginator.HasMorePages() {
+
+		output, err := bucketPaginator.NextPage(context.TODO())
+
+		if err != nil {
+
+			var apiErr smithy.APIError
+
+			if errors.As(err, &apiErr) && apiErr.ErrorCode() == "AccessDenied" {
+
+				log.Printf("Acesso negado ao listar buckets: %s\n", apiErr.ErrorMessage())
+
+				return nil, errors.New("acesso negado ao listar buckets")
+
+			} else {
+
+				log.Printf("Erro ao listar buckets: %s\n", err)
+
+				return nil, err
+			}
+		}
+
+		buckets = append(buckets, output.Buckets...)
+	}
+
+	log.Printf("Total de buckets encontrados: %d", len(buckets))
+
+	return buckets, nil
 }
 
 // ListObjects lista os objetos dentro de um bucket TODO ADD PREFIX

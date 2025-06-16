@@ -17,6 +17,7 @@ type MockS3Client struct {
 	DeleteBucketFunc  func(ctx context.Context, input *s3.DeleteBucketInput, opts ...func(*s3.Options)) (*s3.DeleteBucketOutput, error)
 	DeleteObjectsFunc func(ctx context.Context, input *s3.DeleteObjectsInput, optFns ...func(*s3.Options)) (*s3.DeleteObjectsOutput, error)
 
+	ListBucketsFunc func(ctx context.Context, input *s3.ListBucketsInput, opts ...func(*s3.Options)) (*s3.ListBucketsOutput, error)
 	ListObjectsV2Func func(ctx context.Context, input *s3.ListObjectsV2Input, opts ...func(*s3.Options)) (*s3.ListObjectsV2Output, error)
 
 	HeadBucketFunc func(ctx context.Context, input *s3.HeadBucketInput, opts ...func(*s3.Options)) (*s3.HeadBucketOutput, error)
@@ -77,6 +78,14 @@ func (m *MockS3Client) DeleteObjects(ctx context.Context, input *s3.DeleteObject
 func (m *MockS3Client) ListObjectsV2(ctx context.Context, input *s3.ListObjectsV2Input, opts ...func(*s3.Options)) (*s3.ListObjectsV2Output, error) {
 	if m.ListObjectsV2Func != nil {
 		return m.ListObjectsV2Func(ctx, input, opts...)
+	}
+	return nil, nil
+}
+
+// Implementação do ListBuckets do Mock
+func (m *MockS3Client) ListBuckets(ctx context.Context, input *s3.ListBucketsInput, opts ...func(*s3.Options)) (*s3.ListBucketsOutput, error) {
+	if m.ListBucketsFunc != nil {
+		return m.ListBucketsFunc(ctx, input, opts...)
 	}
 	return nil, nil
 }
