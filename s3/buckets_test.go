@@ -51,6 +51,8 @@ func TestDeleteBucket(t *testing.T) {
 
 		t.Run(testCase.testBucketName, func(t *testing.T) {
 
+			t.Logf("Testando bucket: %s", testCase.testBucketName)
+
 			output, err := mockClient.DeleteBucket(testCase.testBucketName)
 
 			if output != testCase.expectedOutput {
