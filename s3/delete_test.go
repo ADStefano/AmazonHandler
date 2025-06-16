@@ -40,6 +40,8 @@ func TestDeleteFiles(t *testing.T) {
 func TestEmptyBucket(t *testing.T) {
 	for _, testCase := range testDeleteObjects {
 
+		t.Logf("Testando bucket: %s", testCase.testBucketName)
+
 		output, err := mockClient.EmptyBucket(testCase.testBucketName)
 
 		if output != testCase.expectedOutput {
