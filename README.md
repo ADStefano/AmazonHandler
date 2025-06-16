@@ -1,4 +1,4 @@
-# Amazon Handler 
+# AmazonHandler - Biblioteca Go para manipulação de serviços AWS
 
 ## Visão geral
 
@@ -8,7 +8,7 @@ Handler simples feito para facilitar o uso dos serviços da amazon em outros pro
 
 Atualmente o projeto suporta apenas o Amazon S3 e conta com funcionalidades como:
 - Upload de objetos para buckets
-- Criacação de buckets
+- Criação de buckets
 - Exclusão de buckets e objetos
 - Envio de objetos
 - Listagem de objetos e buckets
@@ -31,11 +31,13 @@ Atualmente o projeto suporta apenas o Amazon S3 e conta com funcionalidades como
 ## Exemplo de uso:
 No arquivo main.go mostra como utilizar o projeto de forma simples, com algumas funções de create, delete e list sendo utilizadas.
 
-## Teste:
-O projeto conta com teste unitários e com um mock do serviço da Amazon S3, para rodar os teste utilize o comando: go test -v
+## Testes:
+O projeto possui testes unitários, incluindo mocks do serviço da Amazon S3.
+Para rodar os testes:
+- ``` go test -v ```
 
 ## Roadmap:
-- [ ] Melhorar a cobertura dos testes
+- [ ] Aumentar a cobertura dos testes unitários
 
 - [ ] Implementar Pré signed URLs (upload/download)
 
