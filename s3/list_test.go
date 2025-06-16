@@ -24,10 +24,13 @@ var testListFile = []testListObjects{
 	{bucketName: "test", maxKeys: 5, expectedOutput: output, expectedError: nil},
 }
 
+// Teste para ListObjects
 func TestListObjects(t *testing.T) {
 
 	for _, testCase := range testListFile {
 		t.Run(testCase.bucketName, func(t *testing.T) {
+
+			t.Logf("Testando bucket: %s, maxKeys: %d", testCase.bucketName, testCase.maxKeys)
 
 			output, err := mockClient.ListObjects(testCase.bucketName, testCase.maxKeys)
 

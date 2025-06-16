@@ -233,7 +233,7 @@ func NewS3ClientMock(mock S3Api) *Client {
 
 }
 
-// Cria o mock
+// Cria o mock do S3Client
 func CreateS3ClientMock() *Client {
 	mock := &MockS3Client{
 		CreateBucketFunc: func(ctx context.Context, input *s3.CreateBucketInput, opts ...func(*s3.Options)) (*s3.CreateBucketOutput, error) {
