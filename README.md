@@ -39,7 +39,11 @@ Para rodar os testes:
 ## Roadmap:
 - [ ] Aumentar a cobertura dos testes unitários
 
+- [ ] Implementar upload e download
+
 - [ ] Implementar Pré signed URLs (upload/download)
+
+- [ ] Implementar busca por prefixo ao listar objetos 
 
 ## Autor:
 Me chamo Ângelo P. Di Stefano, sou desenvolvedor de software backend com foco em Go, Python e Java.
