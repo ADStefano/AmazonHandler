@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -17,7 +18,7 @@ type MockS3Client struct {
 	DeleteBucketFunc  func(ctx context.Context, input *s3.DeleteBucketInput, opts ...func(*s3.Options)) (*s3.DeleteBucketOutput, error)
 	DeleteObjectsFunc func(ctx context.Context, input *s3.DeleteObjectsInput, optFns ...func(*s3.Options)) (*s3.DeleteObjectsOutput, error)
 
-	ListBucketsFunc func(ctx context.Context, input *s3.ListBucketsInput, opts ...func(*s3.Options)) (*s3.ListBucketsOutput, error)
+	ListBucketsFunc   func(ctx context.Context, input *s3.ListBucketsInput, opts ...func(*s3.Options)) (*s3.ListBucketsOutput, error)
 	ListObjectsV2Func func(ctx context.Context, input *s3.ListObjectsV2Input, opts ...func(*s3.Options)) (*s3.ListObjectsV2Output, error)
 
 	HeadBucketFunc func(ctx context.Context, input *s3.HeadBucketInput, opts ...func(*s3.Options)) (*s3.HeadBucketOutput, error)
@@ -281,6 +282,12 @@ func CreateS3ClientMock() *Client {
 				return nil, NotFound
 			}
 			return &s3.HeadBucketOutput{}, nil
+		},
+		PutObjectFunc: func(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
+			if *input.Bucket == "entity-too-large" {
+				return nil, errors.New("EntityTooLarge")
+			}
+			return &s3.PutObjectOutput{}, nil
 		},
 	}
 
