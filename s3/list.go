@@ -11,7 +11,7 @@ import (
 	"github.com/aws/smithy-go"
 )
 
-// ListBuckets lista os buckets
+// ListBuckets lista os buckets do usuário autenticado
 func (client *Client) ListBuckets() ([]types.Bucket, error) {
 
 	log.Printf("Buscando buckets...")
@@ -83,8 +83,7 @@ func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Obj
 
 			} else {
 
-				log.Printf("Erro ao buscar os objetos no bucket: %s\n", err)
-				log.Panicf("Erro: %e", err)
+				log.Printf("Erro ao buscar os objetos no bucket %s: %s\n", bucketName, err)
 				return nil, err
 			}
 
