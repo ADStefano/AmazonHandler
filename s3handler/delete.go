@@ -28,10 +28,9 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 	output, err := client.s3Client.DeleteObjects(context.TODO(), params)
 
 	if err != nil {
-		var noBucket *types.NoSuchBucket
-		if errors.As(err, &noBucket) {
+		if errors.As(err, &ErrNoBucket) {
 			log.Printf("Bucket %s não encontrado", bucketName)
-			return false, noBucket
+			return false, ErrNoBucket
 		} else {
 			log.Printf("Erro ao deletar objeto(s) do bucket %s: %s \n", bucketName, err.Error())
 			return false, err

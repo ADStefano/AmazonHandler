@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -48,8 +47,6 @@ type MockBucketNotExists struct {
 	WaitFunc          func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) error
 	WaitForOutputFunc func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) (*s3.HeadBucketOutput, error)
 }
-
-var NotFound *types.NotFound
 
 // Implementação do CreateBucket do Mock
 func (m *MockS3Client) CreateBucket(ctx context.Context, input *s3.CreateBucketInput, opts ...func(*s3.Options)) (*s3.CreateBucketOutput, error) {
@@ -248,21 +245,21 @@ func CreateS3ClientMock() *Client {
 	mock := &MockS3Client{
 		CreateBucketFunc: func(ctx context.Context, input *s3.CreateBucketInput, opts ...func(*s3.Options)) (*s3.CreateBucketOutput, error) {
 			if *input.Bucket == "bucket-exists" {
-				return nil, Exists
+				return nil, ErrExists
 			} else if *input.Bucket == "bucket-owned" {
-				return nil, Owned
+				return nil, ErrOwned
 			}
 			return &s3.CreateBucketOutput{}, nil
 		},
 		DeleteBucketFunc: func(ctx context.Context, input *s3.DeleteBucketInput, opts ...func(*s3.Options)) (*s3.DeleteBucketOutput, error) {
 			if *input.Bucket == "no-bucket" {
-				return nil, NoBucket
+				return nil, ErrNoBucket
 			}
 			return &s3.DeleteBucketOutput{}, nil
 		},
 		DeleteObjectsFunc: func(ctx context.Context, input *s3.DeleteObjectsInput, opts ...func(*s3.Options)) (*s3.DeleteObjectsOutput, error) {
 			if *input.Bucket == "no-bucket" {
-				return nil, NoBucket
+				return nil, ErrNoBucket
 			}
 			pntrBoolTrue := true
 			key := "teste"
@@ -279,13 +276,13 @@ func CreateS3ClientMock() *Client {
 		},
 		HeadBucketFunc: func(ctx context.Context, input *s3.HeadBucketInput, opts ...func(*s3.Options)) (*s3.HeadBucketOutput, error) {
 			if *input.Bucket != "bucket-still-exists" {
-				return nil, NotFound
+				return nil, ErrNotFound
 			}
 			return &s3.HeadBucketOutput{}, nil
 		},
 		PutObjectFunc: func(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
 			if *input.Bucket == "entity-too-large" {
-				return nil, errors.New("EntityTooLarge")
+				return nil, ErrEntityTooLarge
 			}
 			return &s3.PutObjectOutput{}, nil
 		},

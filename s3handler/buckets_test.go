@@ -16,13 +16,13 @@ var mockClient = s3handler.CreateS3ClientMock()
 
 var testCreateBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
-	{testBucketName: "bucket-exists", expectedOutput: false, expectedError: s3handler.Exists},
-	{testBucketName: "bucket-owned", expectedOutput: false, expectedError: s3handler.Owned},
+	{testBucketName: "bucket-exists", expectedOutput: false, expectedError: s3handler.ErrExists},
+	{testBucketName: "bucket-owned", expectedOutput: false, expectedError: s3handler.ErrOwned},
 }
 
 var TestDeleteBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
-	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3handler.NoBucket},
+	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3handler.ErrNoBucket},
 	{testBucketName: "bucket-timeout", expectedOutput: false, expectedError: s3handler.ErrWaiterTimeout},
 }
 
