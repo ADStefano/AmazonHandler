@@ -50,7 +50,7 @@ Para rodar os testes:
 
 - [x] Ajustar injeção de dependência no client
 
-- [ ]  Implementar errors.go com erros padronizados
+- [x]  Implementar errors.go com erros padronizados
 
 - [ ]  Expandir errors.go para utilizar structs
 
