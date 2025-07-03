@@ -1,7 +1,7 @@
-package s3_test
+package s3handler_test
 
 import (
-	"amazon-handler/s3"
+	"amazon-handler/s3handler"
 	"errors"
 	"testing"
 )
@@ -15,8 +15,8 @@ type testDeleteFile struct {
 
 var testDeleteObjects = []testDeleteFile{
 	{testBucketName: "test", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: true, expectedError: nil},
-	{testBucketName: "no-bucket", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3.NoBucket},
-	{testBucketName: "bucket-timeout", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3.ErrWaiterTimeout},
+	{testBucketName: "no-bucket", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3handler.NoBucket},
+	{testBucketName: "bucket-timeout", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3handler.ErrWaiterTimeout},
 }
 
 // Teste para DeleteFiles

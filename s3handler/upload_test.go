@@ -1,9 +1,9 @@
-package s3_test
+package s3handler_test
 
 import (
+	"amazon-handler/s3handler"
 	"errors"
 	"testing"
-	"amazon-handler/s3"
 )
 
 type TestUpload struct {
@@ -34,7 +34,7 @@ var testUploadCases = []TestUpload{
 		Prefix:         "uploads",
 		Path:           "/home/angelo/Documentos/Programação/exemplo.html",
 		ExpectedOutput: false,
-		ExpectedError:  s3.ErrEntityTooLarge,
+		ExpectedError:  s3handler.ErrEntityTooLarge,
 	},
 }
 

@@ -1,4 +1,4 @@
-package s3_test
+package s3handler_test
 
 import (
 	"errors"
