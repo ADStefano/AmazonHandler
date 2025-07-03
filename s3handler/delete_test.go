@@ -15,7 +15,7 @@ type testDeleteFile struct {
 
 var testDeleteObjects = []testDeleteFile{
 	{testBucketName: "test", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: true, expectedError: nil},
-	{testBucketName: "no-bucket", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3handler.NoBucket},
+	{testBucketName: "no-bucket", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3handler.ErrNoBucket},
 	{testBucketName: "bucket-timeout", filesNames: []string{"teste", "teste1", "teste2"}, expectedOutput: false, expectedError: s3handler.ErrWaiterTimeout},
 }
 

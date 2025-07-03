@@ -11,11 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-var Exists *types.BucketAlreadyExists
-var Owned *types.BucketAlreadyOwnedByYou
-var NoBucket *types.NoSuchBucket
-var ErrWaiterTimeout = errors.New("exceeded max wait time for BucketNotExists waiter")
-
 // CreateBucket cria um bucket S3 caso não exista
 func (client *Client) CreateBucket(bucketName string) (bool, error) {
 
@@ -30,12 +25,12 @@ func (client *Client) CreateBucket(bucketName string) (bool, error) {
 	_, err := client.s3Client.CreateBucket(context.TODO(), params)
 	if err != nil {
 
-		if errors.As(err, &Owned) {
+		if errors.As(err, &ErrOwned) {
 			log.Printf("Você já criou um bucket com esse nome: %s", bucketName)
-			return false, Owned
-		} else if errors.As(err, &Exists) {
+			return false, ErrOwned
+		} else if errors.As(err, &ErrExists) {
 			log.Printf("Bucket: %s já existe", bucketName)
-			return false, Exists
+			return false, ErrExists
 		} else {
 			log.Printf("Não foi possível criar o bucket %s", err.Error())
 			return false, err
@@ -57,9 +52,9 @@ func (client *Client) DeleteBucket(bucketName string) (bool, error) {
 	_, err := client.s3Client.DeleteBucket(context.TODO(), params)
 	if err != nil {
 
-		if errors.As(err, &NoBucket) {
+		if errors.As(err, &ErrNoBucket) {
 			log.Printf("Bucket %s não encontrado", bucketName)
-			return false, NoBucket
+			return false, ErrNoBucket
 		} else {
 			log.Printf("Erro ao deletar bucket %s: %v", bucketName, err)
 			return false, err

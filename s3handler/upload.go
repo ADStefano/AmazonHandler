@@ -9,10 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/smithy-go"
 )
-
-var ErrEntityTooLarge = errors.New("EntityTooLarge")
 
 // Upload faz upload do objeto para o bucket S3 (Objetos de até 5GB) e cria um bucket baseado no prefix se não existir.
 func (client *Client) Upload(bucketName, prefix, path string) (bool, error) {
@@ -41,9 +38,7 @@ func (client *Client) Upload(bucketName, prefix, path string) (bool, error) {
 	_, err = client.s3Client.PutObject(context.TODO(), input)
 	if err != nil {
 
-		var apiErr smithy.APIError
-
-		if errors.As(err, &apiErr) && apiErr.ErrorCode() == "EntityTooLarge" {
+		if errors.As(err, &ErrApi) && ErrApi.ErrorCode() == "EntityTooLarge" {
 			log.Printf("O arquivo %s é muito grande para ser enviado para o bucket %s", filename, bucketName)
 			return false, ErrEntityTooLarge
 		}
