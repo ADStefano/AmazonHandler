@@ -50,7 +50,7 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 	return buckets, nil
 }
 
-// ListObjects lista os objetos dentro de um bucket TODO ADD PREFIX
+// ListObjects lista os objetos dentro de um bucket
 func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Object, error) {
 	log.Printf("Buscando objetos no bucket %s", bucketName)
 

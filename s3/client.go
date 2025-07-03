@@ -2,10 +2,8 @@ package s3
 
 import (
 	"context"
-	"log"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -50,21 +48,14 @@ type CreateNewBucketNotExists func() S3NewBucketNotExists
 
 // Estrutura do client do S3
 type Client struct {
-	s3Client  S3Api
-	paginator CreatePaginator
-	objNotExistWaiter CreateNewObjectNotExists
+	s3Client              S3Api
+	paginator             CreatePaginator
+	objNotExistWaiter     CreateNewObjectNotExists
 	bucketNotExistsWaiter CreateNewBucketNotExists
 }
 
 // NewS3Client inicializa um client S3
-func NewS3Client() *Client {
-
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		log.Fatalf("Erro ao carregar as configurações. (%e)", err)
-	}
-
-	client := s3.NewFromConfig(cfg)
+func NewS3Client(client *s3.Client) *Client {
 
 	return &Client{
 		s3Client: client,
