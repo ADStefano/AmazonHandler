@@ -7,10 +7,9 @@ Handler simples feito para facilitar o uso dos serviços da amazon em outros pro
 🚧 Projeto em andamento! 🚧
 
 Atualmente o projeto suporta apenas o Amazon S3 e conta com funcionalidades como:
-- Upload de objetos para buckets
 - Criação de buckets
+- Upload de objetos para buckets
 - Exclusão de buckets e objetos
-- Envio de objetos
 - Listagem de objetos e buckets
 
 ## Tecnologias utilizadas:
@@ -37,15 +36,35 @@ Para rodar os testes:
 - ``` go test -v ```
 
 ## Roadmap:
-- [ ] Aumentar a cobertura dos testes unitários
+- [x] Implementar interface do serviço da AWS S3
+
+- [x] Implementar mocks do serviço da AWS S3
+
+- [x] Implementar criação e exclusão de buckets
+
+- [x] Implementar exclusão de objetos e buckets
+
+- [x] Implementar listagem de objetos e buckets
 
 - [ ] Implementar upload e download
+
+- [ ] Ajustar injeção de dependência no client
+
+- [ ]  Implementar errors.go com erros padronizados
+
+- [ ]  Expandir errors.go para utilizar structs
+
+- [ ]  Implementar arquivos de interface com verificação de implementação
 
 - [ ] Implementar Pré signed URLs (upload/download)
 
 - [ ] Implementar busca por prefixo ao listar objetos 
 
+- [ ] Aumentar a cobertura dos testes unitários
+
+- [ ] Ajustar go mod para importar como package em outros projetos
+
 ## Autor:
-Me chamo Ângelo P. Di Stefano, sou desenvolvedor de software backend com foco em Go, Python e Java.
+Me chamo Ângelo Pedersen Di Stefano, sou desenvolvedor de software com foco em backend nas linguagens Go, Python e Java.
 
 Meu LinkedIn: https://www.linkedin.com/in/angelo-p-di-stefano/
