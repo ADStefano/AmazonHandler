@@ -1,18 +1,18 @@
 package main
 
 import (
-	"amazon-handler/s3"
+	"amazon-handler/s3handler"
 	"context"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	awsS3 "github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-func exemploCreateBucket(client *s3.Client) {
+func exemploCreateBucket(client *s3handler.Client) {
 
 	log.Println("Criando bucket...")
-	_, err := client.CreateBucket("meu-segundo-bucket123")
+	_, err := client.CreateBucket("teste")
 	if err != nil {
 		log.Printf("Erro ao criar bucket: %s", err.Error())
 	} else {
@@ -20,9 +20,9 @@ func exemploCreateBucket(client *s3.Client) {
 	}
 }
 
-func exemploDeleteBucket(client *s3.Client) {
+func exemploDeleteBucket(client *s3handler.Client) {
 	log.Println("Deletando bucket...")
-	_, err := client.DeleteBucket("meu-segundo-bucket123")
+	_, err := client.DeleteBucket("teste")
 	if err != nil {
 		log.Printf("Erro ao deletar bucket: %s", err.Error())
 	} else {
@@ -30,9 +30,9 @@ func exemploDeleteBucket(client *s3.Client) {
 	}
 }
 
-func exemploDeleteObjects(client *s3.Client) {
+func exemploDeleteObjects(client *s3handler.Client) {
 	log.Println("Deletando objeto...")
-	_, err := client.DeleteObjects([]string{"exemplo-teste.html"}, "test")
+	_, err := client.DeleteObjects([]string{"exemplo-teste/exemplo.html"}, "teste")
 	if err != nil {
 		log.Printf("Erro ao deletar objeto: %s", err.Error())
 	} else {
@@ -40,7 +40,7 @@ func exemploDeleteObjects(client *s3.Client) {
 	}
 }
 
-func exemploListBuckets(client *s3.Client) {
+func exemploListBuckets(client *s3handler.Client) {
 	log.Println("Listando buckets...")
 	buckets, err := client.ListBuckets()
 	if err != nil {
@@ -54,9 +54,9 @@ func exemploListBuckets(client *s3.Client) {
 	log.Println("Listagem de buckets concluída com sucesso.")
 }
 
-func exemploListObjects(client *s3.Client) {
+func exemploListObjects(client *s3handler.Client) {
 	log.Println("Listando objetos...")
-	objects, err := client.ListObjects("test", 5)
+	objects, err := client.ListObjects("teste", 5)
 	if err != nil {
 		log.Printf("Erro ao listar objetos: %s", err.Error())
 		return
@@ -68,9 +68,9 @@ func exemploListObjects(client *s3.Client) {
 	log.Println("Listagem de objetos concluída com sucesso.")
 }
 
-func exemploUpload(client *s3.Client) {
+func exemploUpload(client *s3handler.Client) {
 	log.Println("Fazendo upload de objeto...")
-	_, err := client.Upload("test", "exemplo-teste", "/home/angelo/Documentos/Programação/exemplo.html")
+	_, err := client.Upload("teste", "exemplo-teste", "/home/angelo/Documentos/Programação/exemplo.html")
 	if err != nil {
 		log.Printf("Erro ao fazer upload: %s", err.Error())
 	} else {
@@ -86,9 +86,9 @@ func main() {
 		log.Fatalf("Erro ao carregar as configurações. (%e)", err)
 	}
 
-	client := awsS3.NewFromConfig(cfg)
+	client := s3.NewFromConfig(cfg)
 
-	handler := s3.NewS3Client(client)
+	handler := s3handler.NewS3Client(client)
 
 	exemploCreateBucket(handler)
 	exemploDeleteBucket(handler)

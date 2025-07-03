@@ -1,4 +1,4 @@
-package s3
+package s3handler
 
 import (
 	"context"
@@ -17,7 +17,7 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 	log.Printf("Buscando buckets...")
 
 	var buckets []types.Bucket
-
+	// TODO TROCAR PARA MOCK DO PAGINATOR
 	bucketPaginator := s3.NewListBucketsPaginator(client.s3Client, &s3.ListBucketsInput{})
 
 	for bucketPaginator.HasMorePages() {

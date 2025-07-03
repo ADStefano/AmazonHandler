@@ -1,4 +1,4 @@
-package s3
+package s3handler
 
 import (
 	"context"
@@ -60,7 +60,7 @@ func (client *Client) DeleteBucket(bucketName string) (bool, error) {
 		if errors.As(err, &NoBucket) {
 			log.Printf("Bucket %s não encontrado", bucketName)
 			return false, NoBucket
-		} else{
+		} else {
 			log.Printf("Erro ao deletar bucket %s: %v", bucketName, err)
 			return false, err
 		}
@@ -68,7 +68,7 @@ func (client *Client) DeleteBucket(bucketName string) (bool, error) {
 		headBucketParams := &s3.HeadBucketInput{
 			Bucket: aws.String(bucketName),
 		}
-		
+
 		err = client.bucketNotExistsWaiter().Wait(context.TODO(), headBucketParams, time.Minute)
 		if err != nil {
 			log.Printf("Erro ao esperar bucket %s ser deletado", bucketName)
