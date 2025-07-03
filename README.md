@@ -48,7 +48,7 @@ Para rodar os testes:
 
 - [ ] Implementar upload e download
 
-- [ ] Ajustar injeção de dependência no client
+- [x] Ajustar injeção de dependência no client
 
 - [ ]  Implementar errors.go com erros padronizados
 

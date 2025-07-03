@@ -2,7 +2,11 @@ package main
 
 import (
 	"amazon-handler/s3"
+	"context"
 	"log"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	awsS3 "github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 func exemploCreateBucket(client *s3.Client) {
@@ -76,12 +80,20 @@ func exemploUpload(client *s3.Client) {
 
 func main() {
 	log.Println("main")
-	client := s3.NewS3Client()
 
-	exemploCreateBucket(client)
-	exemploDeleteBucket(client)
-	exemploDeleteObjects(client)
-	exemploListBuckets(client)
-	exemploListObjects(client)
-	exemploUpload(client)
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatalf("Erro ao carregar as configurações. (%e)", err)
+	}
+
+	client := awsS3.NewFromConfig(cfg)
+
+	handler := s3.NewS3Client(client)
+
+	exemploCreateBucket(handler)
+	exemploDeleteBucket(handler)
+	exemploDeleteObjects(handler)
+	exemploListBuckets(handler)
+	exemploListObjects(handler)
+	exemploUpload(handler)
 }
