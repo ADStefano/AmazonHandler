@@ -3,6 +3,7 @@ package s3_test
 import (
 	"errors"
 	"testing"
+	"amazon-handler/s3"
 )
 
 type TestUpload struct {
@@ -33,7 +34,7 @@ var testUploadCases = []TestUpload{
 		Prefix:         "uploads",
 		Path:           "/home/angelo/Documentos/Programação/exemplo.html",
 		ExpectedOutput: false,
-		ExpectedError:  errors.New("EntityTooLarge"),
+		ExpectedError:  s3.ErrEntityTooLarge,
 	},
 }
 
@@ -43,11 +44,11 @@ func TestUploads(t *testing.T) {
 			output, err := mockClient.Upload(testCase.TestBucketName, testCase.Prefix, testCase.Path)
 
 			if output != testCase.ExpectedOutput {
-				t.Errorf("Expected output %v, got %v", testCase.ExpectedOutput, output)
+				t.Errorf("Output esperado %v, recebido %v", testCase.ExpectedOutput, output)
 			}
 
 			if !errors.Is(err, testCase.ExpectedError) {
-				t.Errorf("Expected error %v, got %v", testCase.ExpectedError, err)
+				t.Errorf("Erro esperado %v, recebido %v", testCase.ExpectedError, err)
 			}
 		})
 	}

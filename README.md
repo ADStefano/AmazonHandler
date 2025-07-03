@@ -48,6 +48,14 @@ Para rodar os testes:
 
 - [ ] Implementar upload e download
 
+- [ ] Ajustar injeção de dependência no client
+
+- [ ]  Implementar errors.go com erros padronizados
+
+- [ ]  Expandir errors.go para utilizar structs
+
+- [ ]  Implementar arquivos de interface com verificação de implementação
+
 - [ ] Implementar Pré signed URLs (upload/download)
 
 - [ ] Implementar busca por prefixo ao listar objetos 
@@ -57,6 +65,6 @@ Para rodar os testes:
 - [ ] Ajustar go mod para importar como package em outros projetos
 
 ## Autor:
-Me chamo Ângelo P. Di Stefano, sou desenvolvedor de software backend com foco em Go, Python e Java.
+Me chamo Ângelo Pedersen Di Stefano, sou desenvolvedor de software com foco em backend nas linguagens Go, Python e Java.
 
 Meu LinkedIn: https://www.linkedin.com/in/angelo-p-di-stefano/
