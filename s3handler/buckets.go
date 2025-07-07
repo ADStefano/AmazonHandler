@@ -52,9 +52,9 @@ func (client *Client) DeleteBucket(bucketName string) (bool, error) {
 	_, err := client.s3Client.DeleteBucket(context.TODO(), params)
 	if err != nil {
 
-		if errors.As(err, &ErrNoBucket) {
+		if errors.As(err, &ErrNoSuchBucket) {
 			log.Printf("Bucket %s não encontrado", bucketName)
-			return false, ErrNoBucket
+			return false, ErrNoSuchBucket
 		} else {
 			log.Printf("Erro ao deletar bucket %s: %v", bucketName, err)
 			return false, err

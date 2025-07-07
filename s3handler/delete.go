@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-// DeleteObjects apaga um ou mais objetos do bucket S3 // TODO renomear para delete objects
+// DeleteObjects apaga um ou mais objetos do bucket S3
 func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, error) {
 	log.Printf("Deletando objeto(s) %s do bucket %s \n", objKey, bucketName)
 
@@ -28,9 +28,9 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 	output, err := client.s3Client.DeleteObjects(context.TODO(), params)
 
 	if err != nil {
-		if errors.As(err, &ErrNoBucket) {
+		if errors.As(err, &ErrNoSuchBucket) {
 			log.Printf("Bucket %s não encontrado", bucketName)
-			return false, ErrNoBucket
+			return false, ErrNoSuchBucket
 		} else {
 			log.Printf("Erro ao deletar objeto(s) do bucket %s: %s \n", bucketName, err.Error())
 			return false, err

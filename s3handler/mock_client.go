@@ -24,6 +24,8 @@ type MockS3Client struct {
 	HeadObjectFunc func(ctx context.Context, input *s3.HeadObjectInput, opts ...func(*s3.Options)) (*s3.HeadObjectOutput, error)
 	PutObjectFunc  func(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 
+	GetObjectFunc func(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error)
+
 	// AbortMultipartUploadFunc    func(ctx context.Context, input *s3.AbortMultipartUploadInput, opts ...func(*s3.Options)) (*s3.AbortMultipartUploadOutput, error)
 	// CompleteMultipartUploadFunc func(ctx context.Context, input *s3.CompleteMultipartUploadInput, opts ...func(*s3.Options)) (*s3.CompleteMultipartUploadOutput, error)
 	// CreateMultipartUploadFunc   func(ctx context.Context, input *s3.CreateMultipartUploadInput, opts ...func(*s3.Options)) (*s3.CreateMultipartUploadOutput, error)
@@ -153,45 +155,12 @@ func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, 
 	return nil, nil
 }
 
-// func (m *MockS3Client) AbortMultipartUpload(ctx context.Context, input *s3.AbortMultipartUploadInput, opts ...func(*s3.Options)) (*s3.AbortMultipartUploadOutput, error) {
-// 	if m.AbortMultipartUploadFunc != nil {
-// 		return m.AbortMultipartUploadFunc(ctx, input, opts...)
-// 	}
-
-// 	return nil, nil
-// }
-
-// func (m *MockS3Client) CompleteMultipartUpload(ctx context.Context, input *s3.CompleteMultipartUploadInput, opts ...func(*s3.Options)) (*s3.CompleteMultipartUploadOutput, error) {
-// 	if m.CompleteMultipartUploadFunc != nil {
-// 		return m.CompleteMultipartUploadFunc(ctx, input, opts...)
-// 	}
-
-// 	return nil, nil
-// }
-
-// func (m *MockS3Client) CreateMultipartUpload(ctx context.Context, input *s3.CreateMultipartUploadInput, opts ...func(*s3.Options)) (*s3.CreateMultipartUploadOutput, error) {
-// 	if m.CreateMultipartUploadFunc != nil {
-// 		return m.CreateMultipartUploadFunc(ctx, input, opts...)
-// 	}
-
-// 	return nil, nil
-// }
-
-// func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
-// 	if m.PutObjectFunc != nil {
-// 		return m.PutObjectFunc(ctx, input, opts...)
-// 	}
-
-// 	return nil, nil
-// }
-
-// func (m *MockS3Client) UploadPart(ctx context.Context, input *s3.UploadPartInput, opts ...func(*s3.Options)) (*s3.UploadPartOutput, error) {
-// 	if m.UploadPartFunc != nil {
-// 		return m.UploadPartFunc(ctx, input, opts...)
-// 	}
-
-// 	return nil, nil
-// }
+func (m *MockS3Client) GetObject(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+	if m.GetObjectFunc != nil {
+		return m.GetObjectFunc(ctx, input, opts...)
+	}
+	return nil, nil
+}
 
 // Mock da inicialização do S3
 func NewS3ClientMock(mock S3Api) *Client {
@@ -244,22 +213,23 @@ func NewS3ClientMock(mock S3Api) *Client {
 func CreateS3ClientMock() *Client {
 	mock := &MockS3Client{
 		CreateBucketFunc: func(ctx context.Context, input *s3.CreateBucketInput, opts ...func(*s3.Options)) (*s3.CreateBucketOutput, error) {
-			if *input.Bucket == "bucket-exists" {
+			switch *input.Bucket {
+			case "bucket-exists":
 				return nil, ErrExists
-			} else if *input.Bucket == "bucket-owned" {
+			case "bucket-owned":
 				return nil, ErrOwned
 			}
 			return &s3.CreateBucketOutput{}, nil
 		},
 		DeleteBucketFunc: func(ctx context.Context, input *s3.DeleteBucketInput, opts ...func(*s3.Options)) (*s3.DeleteBucketOutput, error) {
 			if *input.Bucket == "no-bucket" {
-				return nil, ErrNoBucket
+				return nil, ErrNoSuchBucket
 			}
 			return &s3.DeleteBucketOutput{}, nil
 		},
 		DeleteObjectsFunc: func(ctx context.Context, input *s3.DeleteObjectsInput, opts ...func(*s3.Options)) (*s3.DeleteObjectsOutput, error) {
 			if *input.Bucket == "no-bucket" {
-				return nil, ErrNoBucket
+				return nil, ErrNoSuchBucket
 			}
 			pntrBoolTrue := true
 			key := "teste"
@@ -285,6 +255,15 @@ func CreateS3ClientMock() *Client {
 				return nil, ErrEntityTooLarge
 			}
 			return &s3.PutObjectOutput{}, nil
+		},
+		GetObjectFunc: func(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+			if *input.Bucket == "no-such-bucket" {
+				return nil, ErrNoSuchBucket
+			}
+			if *input.Bucket == "no-such-key" {
+				return nil, ErrNoSuchKey
+			}
+			return &s3.GetObjectOutput{}, nil
 		},
 	}
 

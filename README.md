@@ -11,6 +11,7 @@ Atualmente o projeto suporta apenas o Amazon S3 e conta com funcionalidades como
 - Upload de objetos para buckets
 - Exclusão de buckets e objetos
 - Listagem de objetos e buckets
+- Download de objetos
 
 ## Tecnologias utilizadas:
 - Go v.1.22.2
@@ -28,12 +29,12 @@ Atualmente o projeto suporta apenas o Amazon S3 e conta com funcionalidades como
 - ``` import "github.com/ADStefano/AmazonHandler" ```
 
 ## Exemplo de uso:
-No arquivo main.go mostra como utilizar o projeto de forma simples, com algumas funções de create, delete e list sendo utilizadas.
+No arquivo main.go mostra como utilizar o projeto de forma simples, com algumas funções de create bucket, delete bucket/object, list bucket/object, upload e download de objetos sendo utilizadas.
 
 ## Testes:
 O projeto possui testes unitários, incluindo mocks do serviço da Amazon S3.
 Para rodar os testes:
-- ``` go test -v ```
+- ``` go test -v ./... ```
 
 ## Roadmap:
 - [x] Implementar interface do serviço da AWS S3
@@ -46,19 +47,21 @@ Para rodar os testes:
 
 - [x] Implementar listagem de objetos e buckets
 
-- [ ] Implementar upload e download
+- [x] Implementar upload e download
 
 - [x] Ajustar injeção de dependência no client
 
 - [x]  Implementar errors.go com erros padronizados
 
-- [ ]  Expandir errors.go para utilizar structs
+- [ ]  Expandir errors.go para utilizar structs e parse padronizando ApiErr
 
 - [ ]  Implementar arquivos de interface com verificação de implementação
 
 - [ ] Implementar Pré signed URLs (upload/download)
 
 - [ ] Implementar busca por prefixo ao listar objetos 
+
+- [ ] Melhorar logs
 
 - [ ] Aumentar a cobertura dos testes unitários
 
