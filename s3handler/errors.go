@@ -11,8 +11,9 @@ var (
 	ErrApi            smithy.APIError
 	ErrExists         *types.BucketAlreadyExists
 	ErrOwned          *types.BucketAlreadyOwnedByYou
-	ErrNoBucket       *types.NoSuchBucket
+	ErrNoSuchBucket   *types.NoSuchBucket
 	ErrNotFound       *types.NotFound
+	ErrNoSuchKey      *types.NoSuchKey
 	ErrEntityTooLarge = errors.New("EntityTooLarge")
 	ErrAccessDenied   = errors.New("AccessDenied")
 	ErrWaiterTimeout  = errors.New("exceeded max wait time for BucketNotExists waiter")

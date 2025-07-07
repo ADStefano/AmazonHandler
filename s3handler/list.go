@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/aws/smithy-go"
 )
 
 // ListBuckets lista os buckets do usuário autenticado
@@ -25,9 +26,11 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 
 		if err != nil {
 
-			if errors.As(err, &ErrApi) && ErrApi.ErrorCode() == "AccessDenied" {
+			var errApi smithy.APIError
 
-				log.Printf("Acesso negado ao listar buckets: %s\n", ErrApi.ErrorMessage())
+			if errors.As(err, &errApi) && errApi.ErrorCode() == "AccessDenied" {
+
+				log.Printf("Acesso negado ao listar buckets: %s\n", errApi.ErrorMessage())
 
 				return nil, ErrAccessDenied
 
@@ -71,7 +74,7 @@ func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Obj
 
 		if err != nil {
 
-			if errors.As(err, &ErrNoBucket) {
+			if errors.As(err, &ErrNoSuchBucket) {
 
 				log.Printf("Bucket %s não existe.\n", bucketName)
 				return nil, err

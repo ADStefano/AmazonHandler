@@ -22,7 +22,7 @@ var testCreateBuckets = []testBucket{
 
 var TestDeleteBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
-	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3handler.ErrNoBucket},
+	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3handler.ErrNoSuchBucket},
 	{testBucketName: "bucket-timeout", expectedOutput: false, expectedError: s3handler.ErrWaiterTimeout},
 }
 
