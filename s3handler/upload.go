@@ -36,7 +36,7 @@ func (client *Client) UploadS3(bucketName, prefix, path string) (bool, error) {
 		Body:   file,
 	}
 
-	_, err = client.s3Client.PutObject(context.TODO(), input)
+	_, err = client.S3Client.PutObject(context.TODO(), input)
 	if err != nil {
 
 		var errApi smithy.APIError

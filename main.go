@@ -129,11 +129,11 @@ func main() {
 
 	handler := s3handler.NewS3Client(client)
 
-	// exemploCreateBucket(handler)
-	// exemploDeleteBucket(handler)
-	// exemploDeleteObjects(handler)
-	// exemploListBuckets(handler)
-	// exemploListObjects(handler)
-	// exemploUpload(handler)
+	exemploCreateBucket(handler)
+	exemploDeleteBucket(handler)
+	exemploDeleteObjects(handler)
+	exemploListBuckets(handler)
+	exemploListObjects(handler)
+	exemploUpload(handler)
 	exemploDownload(handler)
 }

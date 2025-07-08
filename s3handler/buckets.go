@@ -22,7 +22,7 @@ func (client *Client) CreateBucket(bucketName string) (bool, error) {
 			LocationConstraint: types.BucketLocationConstraint("sa-east-1"),
 		},
 	}
-	_, err := client.s3Client.CreateBucket(context.TODO(), params)
+	_, err := client.S3Client.CreateBucket(context.TODO(), params)
 	if err != nil {
 
 		if errors.As(err, &ErrOwned) {
@@ -49,7 +49,7 @@ func (client *Client) DeleteBucket(bucketName string) (bool, error) {
 		Bucket: aws.String(bucketName),
 	}
 
-	_, err := client.s3Client.DeleteBucket(context.TODO(), params)
+	_, err := client.S3Client.DeleteBucket(context.TODO(), params)
 	if err != nil {
 
 		if errors.As(err, &ErrNoSuchBucket) {
@@ -64,7 +64,7 @@ func (client *Client) DeleteBucket(bucketName string) (bool, error) {
 			Bucket: aws.String(bucketName),
 		}
 
-		err = client.bucketNotExistsWaiter().Wait(context.TODO(), headBucketParams, time.Minute)
+		err = client.BucketNotExistsWaiter().Wait(context.TODO(), headBucketParams, time.Minute)
 		if err != nil {
 			log.Printf("Erro ao esperar bucket %s ser deletado", bucketName)
 			return false, ErrWaiterTimeout

@@ -18,7 +18,7 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 
 	var buckets []types.Bucket
 	// TODO TROCAR PARA MOCK DO PAGINATOR
-	bucketPaginator := s3.NewListBucketsPaginator(client.s3Client, &s3.ListBucketsInput{})
+	bucketPaginator := s3.NewListBucketsPaginator(client.S3Client, &s3.ListBucketsInput{})
 
 	for bucketPaginator.HasMorePages() {
 
@@ -66,7 +66,7 @@ func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Obj
 		MaxKeys: &maxKeys,
 	}
 
-	paginator := client.paginator(params)
+	paginator := client.Paginator(params)
 
 	for paginator.HasMorePages() {
 
