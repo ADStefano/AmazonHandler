@@ -25,7 +25,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 		Delete: &types.Delete{Objects: objectIds},
 	}
 
-	output, err := client.s3Client.DeleteObjects(context.TODO(), params)
+	output, err := client.S3Client.DeleteObjects(context.TODO(), params)
 
 	if err != nil {
 		if errors.As(err, &ErrNoSuchBucket) {
@@ -50,7 +50,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 
 		input := &s3.HeadObjectInput{Bucket: aws.String(bucketName), Key: delObj.Key}
 
-		err = client.objNotExistWaiter().Wait(context.TODO(), input, time.Minute)
+		err = client.ObjNotExistWaiter().Wait(context.TODO(), input, time.Minute)
 		if err != nil {
 			log.Printf("Erro ao aguardar o objeto ser deletado: %s", *delObj.Key)
 			return false, ErrWaiterTimeout

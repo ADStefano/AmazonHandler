@@ -1,13 +1,10 @@
-package s3handler
+package mock
 
 import (
 	"context"
-	"log"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // Mock do S3 para testes
@@ -25,12 +22,6 @@ type MockS3Client struct {
 	PutObjectFunc  func(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 
 	GetObjectFunc func(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error)
-
-	// AbortMultipartUploadFunc    func(ctx context.Context, input *s3.AbortMultipartUploadInput, opts ...func(*s3.Options)) (*s3.AbortMultipartUploadOutput, error)
-	// CompleteMultipartUploadFunc func(ctx context.Context, input *s3.CompleteMultipartUploadInput, opts ...func(*s3.Options)) (*s3.CompleteMultipartUploadOutput, error)
-	// CreateMultipartUploadFunc   func(ctx context.Context, input *s3.CreateMultipartUploadInput, opts ...func(*s3.Options)) (*s3.CreateMultipartUploadOutput, error)
-	// PutObjectFunc               func(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error)
-	// UploadPartFunc              func(ctx context.Context, input *s3.UploadPartInput, opts ...func(*s3.Options)) (*s3.UploadPartOutput, error)
 }
 
 // Mock do paginator para testes
@@ -40,11 +31,13 @@ type MockPaginator struct {
 	Err   error
 }
 
+// Mock para o waiter de objeto não existente
 type MockObjectNotExists struct {
 	WaitFunc          func(ctx context.Context, params *s3.HeadObjectInput, maxWaitDur time.Duration, optFns ...func(*s3.ObjectNotExistsWaiterOptions)) error
 	WaitForOutputFunc func(ctx context.Context, params *s3.HeadObjectInput, maxWaitDur time.Duration, optFns ...func(*s3.ObjectNotExistsWaiterOptions)) (*s3.HeadObjectOutput, error)
 }
 
+// Mock para o waiter de bucket não existente
 type MockBucketNotExists struct {
 	WaitFunc          func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) error
 	WaitForOutputFunc func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) (*s3.HeadBucketOutput, error)
@@ -160,112 +153,4 @@ func (m *MockS3Client) GetObject(ctx context.Context, input *s3.GetObjectInput, 
 		return m.GetObjectFunc(ctx, input, opts...)
 	}
 	return nil, nil
-}
-
-// Mock da inicialização do S3
-func NewS3ClientMock(mock S3Api) *Client {
-
-	log.Println("Carregando interface mock")
-
-	return &Client{
-		s3Client: mock,
-		paginator: func(input *s3.ListObjectsV2Input) S3Paginator {
-			return &MockPaginator{
-				Pages: []*s3.ListObjectsV2Output{
-					{
-						Contents: []types.Object{
-							{Key: aws.String("exemplo.html"), Size: aws.Int64(2048), LastModified: aws.Time(time.Now().Add(-24 * time.Hour))},
-						},
-					},
-				},
-				Index: 0,
-			}
-		},
-		objNotExistWaiter: func() S3NewObjectNotExists {
-			return &MockObjectNotExists{
-				WaitFunc: func(ctx context.Context, params *s3.HeadObjectInput, maxWaitDur time.Duration, optFns ...func(*s3.ObjectNotExistsWaiterOptions)) error {
-					errorBucket := "bucket-timeout"
-					pntrErrorBucket := &errorBucket
-					if *params.Bucket == *pntrErrorBucket {
-						return ErrWaiterTimeout
-					}
-					return nil
-				},
-			}
-		},
-		bucketNotExistsWaiter: func() S3NewBucketNotExists {
-			return &MockBucketNotExists{
-				WaitFunc: func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) error {
-					errorBucket := "bucket-timeout"
-					pntrErrorBucket := &errorBucket
-					if *params.Bucket == *pntrErrorBucket {
-						return ErrWaiterTimeout
-					}
-					return nil
-				},
-			}
-		},
-	}
-
-}
-
-// Cria o mock do S3Client
-func CreateS3ClientMock() *Client {
-	mock := &MockS3Client{
-		CreateBucketFunc: func(ctx context.Context, input *s3.CreateBucketInput, opts ...func(*s3.Options)) (*s3.CreateBucketOutput, error) {
-			switch *input.Bucket {
-			case "bucket-exists":
-				return nil, ErrExists
-			case "bucket-owned":
-				return nil, ErrOwned
-			}
-			return &s3.CreateBucketOutput{}, nil
-		},
-		DeleteBucketFunc: func(ctx context.Context, input *s3.DeleteBucketInput, opts ...func(*s3.Options)) (*s3.DeleteBucketOutput, error) {
-			if *input.Bucket == "no-bucket" {
-				return nil, ErrNoSuchBucket
-			}
-			return &s3.DeleteBucketOutput{}, nil
-		},
-		DeleteObjectsFunc: func(ctx context.Context, input *s3.DeleteObjectsInput, opts ...func(*s3.Options)) (*s3.DeleteObjectsOutput, error) {
-			if *input.Bucket == "no-bucket" {
-				return nil, ErrNoSuchBucket
-			}
-			pntrBoolTrue := true
-			key := "teste"
-			versionId := "versao Teste"
-			return &s3.DeleteObjectsOutput{
-				Deleted: []types.DeletedObject{
-					{
-						DeleteMarker: &pntrBoolTrue,
-						Key:          &key,
-						VersionId:    &versionId,
-					},
-				},
-			}, nil
-		},
-		HeadBucketFunc: func(ctx context.Context, input *s3.HeadBucketInput, opts ...func(*s3.Options)) (*s3.HeadBucketOutput, error) {
-			if *input.Bucket != "bucket-still-exists" {
-				return nil, ErrNotFound
-			}
-			return &s3.HeadBucketOutput{}, nil
-		},
-		PutObjectFunc: func(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
-			if *input.Bucket == "entity-too-large" {
-				return nil, ErrEntityTooLarge
-			}
-			return &s3.PutObjectOutput{}, nil
-		},
-		GetObjectFunc: func(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
-			if *input.Bucket == "no-such-bucket" {
-				return nil, ErrNoSuchBucket
-			}
-			if *input.Bucket == "no-such-key" {
-				return nil, ErrNoSuchKey
-			}
-			return &s3.GetObjectOutput{}, nil
-		},
-	}
-
-	return NewS3ClientMock(mock)
 }

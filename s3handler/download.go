@@ -19,7 +19,7 @@ func (client *Client) DownloadS3(bucketName, objectKey string) (*s3.GetObjectOut
 		Key:    aws.String(objectKey),
 	}
 
-	output, err := client.s3Client.GetObject(context.TODO(), input)
+	output, err := client.S3Client.GetObject(context.TODO(), input)
 
 	if err != nil {
 

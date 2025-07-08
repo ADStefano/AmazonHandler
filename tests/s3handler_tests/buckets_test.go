@@ -2,6 +2,7 @@ package s3handler_test
 
 import (
 	"amazon-handler/s3handler"
+	"amazon-handler/internal/mocks/s3handler_mocks"
 	"errors"
 	"testing"
 )
@@ -12,7 +13,7 @@ type testBucket struct {
 	expectedError  error
 }
 
-var mockClient = s3handler.CreateS3ClientMock()
+var mockClient = mock.CreateS3ClientMock()
 
 var testCreateBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
