@@ -3,6 +3,7 @@ package mock
 import (
 	"context"
 	"time"
+	"amazon-handler/s3handler"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -23,6 +24,8 @@ type MockS3Client struct {
 
 	GetObjectFunc func(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error)
 }
+
+var _ s3handler.S3Api = (*MockS3Client)(nil)
 
 // Mock do paginator para testes
 type MockPaginator struct {

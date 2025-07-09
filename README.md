@@ -55,7 +55,7 @@ Para rodar os testes:
 
 - [ ]  Expandir errors.go para utilizar structs e parse padronizando ApiErr
 
-- [ ]  Implementar arquivos de interface com verificação de implementação
+- [x]  Implementar arquivos de interface com verificação de implementação
 
 - [ ] Implementar Pré signed URLs (upload/download)
 
