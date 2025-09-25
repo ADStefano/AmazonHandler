@@ -1,10 +1,11 @@
 package mock
 
 import (
+	"amazon-handler/s3handler"
 	"context"
 	"time"
-	"amazon-handler/s3handler"
 
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -44,6 +45,13 @@ type MockObjectNotExists struct {
 type MockBucketNotExists struct {
 	WaitFunc          func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) error
 	WaitForOutputFunc func(ctx context.Context, params *s3.HeadBucketInput, maxWaitDur time.Duration, optFns ...func(*s3.BucketNotExistsWaiterOptions)) (*s3.HeadBucketOutput, error)
+}
+
+type MockPresigner struct {
+	PresignGetObjectFunc    func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignPutObjectFunc    func(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignDeleteBucketFunc func(ctx context.Context, params *s3.DeleteBucketInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignDeleteObjectFunc func(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
 }
 
 // Implementação do CreateBucket do Mock
@@ -154,6 +162,34 @@ func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, 
 func (m *MockS3Client) GetObject(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
 	if m.GetObjectFunc != nil {
 		return m.GetObjectFunc(ctx, input, opts...)
+	}
+	return nil, nil
+}
+
+func (m *MockPresigner) PresignGetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+	if m.PresignGetObjectFunc != nil {
+		return m.PresignGetObjectFunc(ctx, params, optFns...)
+	}
+	return nil, nil
+}
+
+func (m *MockPresigner) PresignPutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+	if m.PresignPutObjectFunc != nil {
+		return m.PresignPutObjectFunc(ctx, params, optFns...)
+	}
+	return nil, nil
+}
+
+func (m *MockPresigner) PresignDeleteBucket(ctx context.Context, params *s3.DeleteBucketInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+	if m.PresignDeleteBucketFunc != nil {
+		return m.PresignDeleteBucketFunc(ctx, params, optFns...)
+	}
+	return nil, nil
+}
+
+func (m *MockPresigner) PresignDeleteObject(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+	if m.PresignDeleteObjectFunc != nil {
+		return m.PresignDeleteObjectFunc(ctx, params, optFns...)
 	}
 	return nil, nil
 }

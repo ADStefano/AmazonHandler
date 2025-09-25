@@ -1,12 +1,13 @@
 package mock
 
 import (
+	"amazon-handler/s3handler"
 	"context"
 	"log"
 	"time"
-	"amazon-handler/s3handler"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
@@ -18,6 +19,20 @@ func NewS3ClientMock(mock s3handler.S3Api) *s3handler.Client {
 
 	return &s3handler.Client{
 		S3Client: mock,
+		PresignerClient: &MockPresigner{
+			PresignGetObjectFunc: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				return &v4.PresignedHTTPRequest{}, nil
+			},
+			PresignPutObjectFunc: func(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				return &v4.PresignedHTTPRequest{}, nil
+			},
+			PresignDeleteBucketFunc: func(ctx context.Context, params *s3.DeleteBucketInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				return &v4.PresignedHTTPRequest{}, nil
+			},
+			PresignDeleteObjectFunc: func(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				return &v4.PresignedHTTPRequest{}, nil
+			},
+		},
 		Paginator: func(input *s3.ListObjectsV2Input) s3handler.S3Paginator {
 			return &MockPaginator{
 				Pages: []*s3.ListObjectsV2Output{
@@ -106,7 +121,7 @@ func CreateS3ClientMock() *s3handler.Client {
 			return &s3.PutObjectOutput{}, nil
 		},
 		GetObjectFunc: func(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
-			switch *input.Bucket{
+			switch *input.Bucket {
 			case "no-such-bucket":
 				return nil, s3handler.ErrNoSuchBucket
 			case "no-such-key":

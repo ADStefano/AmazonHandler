@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -117,10 +118,23 @@ func exemploDownload(client *s3handler.Client) {
 	log.Println("Download concluído com sucesso.")
 }
 
+func exemploGetPresignedURL(client *s3handler.Client) {
+
+	log.Println("Gerando URL pré-assinada...")
+
+	url, err := client.GetPreSignedURL("teste", "teste/exemplo.html", 600*time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
 func main() {
 	log.Println("main")
 
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		log.Fatalf("Erro ao carregar as configurações. (%e)", err)
 	}
@@ -129,11 +143,13 @@ func main() {
 
 	handler := s3handler.NewS3Client(client)
 
-	exemploCreateBucket(handler)
-	exemploDeleteBucket(handler)
-	exemploDeleteObjects(handler)
-	exemploListBuckets(handler)
-	exemploListObjects(handler)
-	exemploUpload(handler)
-	exemploDownload(handler)
+	// exemploCreateBucket(handler)
+	// exemploDeleteBucket(handler)
+	// exemploDeleteObjects(handler)
+	// exemploListBuckets(handler)
+	// exemploListObjects(handler)
+	// exemploUpload(handler)
+	// exemploDownload(handler)
+	exemploGetPresignedURL(handler)
+	
 }
