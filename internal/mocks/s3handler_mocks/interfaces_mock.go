@@ -50,6 +50,7 @@ type MockBucketNotExists struct {
 type MockPresigner struct {
 	PresignGetObjectFunc    func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
 	PresignPutObjectFunc    func(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignPostObjectFunc   func(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignPostOptions)) (*s3.PresignedPostRequest, error)
 	PresignDeleteBucketFunc func(ctx context.Context, params *s3.DeleteBucketInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
 	PresignDeleteObjectFunc func(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
 }
@@ -176,6 +177,13 @@ func (m *MockPresigner) PresignGetObject(ctx context.Context, params *s3.GetObje
 func (m *MockPresigner) PresignPutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
 	if m.PresignPutObjectFunc != nil {
 		return m.PresignPutObjectFunc(ctx, params, optFns...)
+	}
+	return nil, nil
+}
+
+func (m *MockPresigner) PresignPostObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignPostOptions)) (*s3.PresignedPostRequest, error) {
+	if m.PresignPostObjectFunc != nil {
+		return m.PresignPostObjectFunc(ctx, params, optFns...)
 	}
 	return nil, nil
 }

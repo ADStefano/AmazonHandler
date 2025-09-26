@@ -120,9 +120,22 @@ func exemploDownload(client *s3handler.Client) {
 
 func exemploGetPresignedURL(client *s3handler.Client) {
 
-	log.Println("Gerando URL pré-assinada...")
+	log.Println("Gerando GET URL pré-assinada...")
 
-	url, err := client.GetPreSignedURL("teste", "teste/exemplo.html", 600*time.Second)
+	url, err := client.GetPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
+func exemploPostPresignedURL(client *s3handler.Client) {
+
+	log.Println("Gerando POST URL pré-assinada...")
+
+	url, err := client.PostPreSignedURL("adstefano", "teste/exemplo.html", 300 * time.Second)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
 		return
@@ -143,13 +156,14 @@ func main() {
 
 	handler := s3handler.NewS3Client(client)
 
-	// exemploCreateBucket(handler)
-	// exemploDeleteBucket(handler)
-	// exemploDeleteObjects(handler)
-	// exemploListBuckets(handler)
-	// exemploListObjects(handler)
-	// exemploUpload(handler)
-	// exemploDownload(handler)
+	exemploCreateBucket(handler)
+	exemploDeleteBucket(handler)
+	exemploDeleteObjects(handler)
+	exemploListBuckets(handler)
+	exemploListObjects(handler)
+	exemploUpload(handler)
+	exemploDownload(handler)
 	exemploGetPresignedURL(handler)
+	exemploPostPresignedURL(handler)
 	
 }

@@ -21,16 +21,88 @@ func NewS3ClientMock(mock s3handler.S3Api) *s3handler.Client {
 		S3Client: mock,
 		PresignerClient: &MockPresigner{
 			PresignGetObjectFunc: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				if *params.Bucket == "test-bucket-success"{
+					return &v4.PresignedHTTPRequest{
+						URL:    "https://httpbin.org/status/200",
+						Method: "GET",
+						SignedHeader: map[string][]string{
+							"Host":                 {"test-bucket.s3.amazonaws.com"},
+							"X-Amz-Content-Sha256": {"UNSIGNED-PAYLOAD"},
+							"X-Amz-Date":           {"20240605T123456Z"},
+							"X-Amz-Expires":        {"300"},
+							"X-Amz-SignedHeaders":  {"host"},
+							"X-Amz-Signature":      {"EXAMPLE_SIGNATURE"},
+						},
+					}, nil
+				}
 				return &v4.PresignedHTTPRequest{}, nil
 			},
 			PresignPutObjectFunc: func(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				if *params.Bucket == "test-bucket-success"{
+					return &v4.PresignedHTTPRequest{
+						URL:    "https://httpbin.org/status/200",
+						Method: "PUT",
+						SignedHeader: map[string][]string{
+							"Host":                 {"test-bucket.s3.amazonaws.com"},
+							"X-Amz-Content-Sha256": {"UNSIGNED-PAYLOAD"},
+							"X-Amz-Date":           {"20240605T123456Z"},
+							"X-Amz-Expires":        {"300"},
+							"X-Amz-SignedHeaders":  {"host"},
+							"X-Amz-Signature":      {"EXAMPLE_SIGNATURE"},
+						},
+					}, nil
+				}
 				return &v4.PresignedHTTPRequest{}, nil
 			},
 			PresignDeleteBucketFunc: func(ctx context.Context, params *s3.DeleteBucketInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				if *params.Bucket == "test-bucket-success"{
+					return &v4.PresignedHTTPRequest{
+						URL:    "https://httpbin.org/status/200",
+						Method: "DELETE",
+						SignedHeader: map[string][]string{
+							"Host":                 {"test-bucket.s3.amazonaws.com"},
+							"X-Amz-Content-Sha256": {"UNSIGNED-PAYLOAD"},
+							"X-Amz-Date":           {"20240605T123456Z"},
+							"X-Amz-Expires":        {"300"},
+							"X-Amz-SignedHeaders":  {"host"},
+							"X-Amz-Signature":      {"EXAMPLE_SIGNATURE"},
+						},
+					}, nil
+				}
 				return &v4.PresignedHTTPRequest{}, nil
 			},
 			PresignDeleteObjectFunc: func(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+				if *params.Bucket == "test-bucket-success"{
+					return &v4.PresignedHTTPRequest{
+						URL:    "https://httpbin.org/status/200",
+						Method: "DELETE",
+						SignedHeader: map[string][]string{
+							"Host":                 {"test-bucket.s3.amazonaws.com"},
+							"X-Amz-Content-Sha256": {"UNSIGNED-PAYLOAD"},
+							"X-Amz-Date":           {"20240605T123456Z"},
+							"X-Amz-Expires":        {"300"},
+							"X-Amz-SignedHeaders":  {"host"},
+							"X-Amz-Signature":      {"EXAMPLE_SIGNATURE"},
+						},
+					}, nil
+				}	
 				return &v4.PresignedHTTPRequest{}, nil
+			},
+			PresignPostObjectFunc: func(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignPostOptions)) (*s3.PresignedPostRequest, error) {
+				if *params.Bucket == "test-bucket-success"{
+					return &s3.PresignedPostRequest{
+						URL: "https://httpbin.org/status/200",
+						Values: map[string]string{
+							"key":             *params.Key,
+							"bucket":          *params.Bucket,
+							"x-amz-algorithm": "AWS4-HMAC-SHA256",
+							"x-amz-credential": "EXAMPLECREDENTIAL/20240605/us-east-1/s3/aws4_request",
+							"x-amz-date":      "20240605T123456Z",
+							"x-amz-signature": "EXAMPLESIGNATURE",
+						},
+					}, nil
+				}				
+				return &s3.PresignedPostRequest{}, nil
 			},
 		},
 		Paginator: func(input *s3.ListObjectsV2Input) s3handler.S3Paginator {
