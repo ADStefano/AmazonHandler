@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -46,3 +47,12 @@ type S3NewBucketNotExists interface {
 
 // Função para criar um waiter de bucket não existente do S3
 type CreateNewBucketNotExists func() S3NewBucketNotExists
+
+// Interface para o presigner do S3
+type Presigner interface {
+	PresignGetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignPutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignPostObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.PresignPostOptions)) (*s3.PresignedPostRequest, error)
+	PresignDeleteBucket(ctx context.Context, params *s3.DeleteBucketInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+	PresignDeleteObject(ctx context.Context, params *s3.DeleteObjectInput, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error)
+}

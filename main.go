@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -117,10 +118,75 @@ func exemploDownload(client *s3handler.Client) {
 	log.Println("Download concluído com sucesso.")
 }
 
+func exemploGetPresignedURL(client *s3handler.Client) {
+
+	log.Println("Gerando GET URL pré-assinada...")
+
+	url, err := client.GetPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
+func exemploPutPresignedURL(client *s3handler.Client) {
+
+	log.Println("Gerando PUT URL pré-assinada...")
+
+	url, err := client.PutPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
+func exemploPostPresignedURL(client *s3handler.Client) {
+
+	log.Println("Gerando POST URL pré-assinada...")
+
+	url, err := client.PostPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
+func exemploDeleteBucketPresignedURL(client *s3handler.Client) {
+	
+	log.Println("Gerando DELETE URL pré-assinada...")
+
+	url, err := client.DeleteBucketPreSignedURL("teste", 300 * time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
+func exemploDeleteObjectPresignedURL(client *s3handler.Client) {
+	
+	log.Println("Gerando DELETE URL pré-assinada...")
+
+	url, err := client.DeleteObjectPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	if err != nil {
+		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
+		return
+	}
+
+	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+}
+
 func main() {
 	log.Println("main")
-
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+ 
+	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		log.Fatalf("Erro ao carregar as configurações. (%e)", err)
 	}
@@ -136,4 +202,10 @@ func main() {
 	exemploListObjects(handler)
 	exemploUpload(handler)
 	exemploDownload(handler)
+	exemploGetPresignedURL(handler)
+	exemploPostPresignedURL(handler)
+	exemploPutPresignedURL(handler)
+	exemploDeleteObjectPresignedURL(handler)
+	exemploDeleteBucketPresignedURL(handler)
+	
 }

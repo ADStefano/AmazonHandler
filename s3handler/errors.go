@@ -17,4 +17,5 @@ var (
 	ErrEntityTooLarge = errors.New("EntityTooLarge")
 	ErrAccessDenied   = errors.New("AccessDenied")
 	ErrWaiterTimeout  = errors.New("exceeded max wait time for BucketNotExists waiter")
+	ErrEmptyParam   = errors.New("bucket name or object key cannot be empty")
 )

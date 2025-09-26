@@ -57,7 +57,9 @@ Para rodar os testes:
 
 - [x]  Implementar arquivos de interface com verificação de implementação
 
-- [ ] Implementar Pré signed URLs (upload/download)
+- [x] Implementar Pré signed URLs (upload/download)
+  
+- [ ] Alterar funções para receberem o contexto
 
 - [ ] Implementar busca por prefixo ao listar objetos 
 
