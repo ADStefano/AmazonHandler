@@ -18,10 +18,20 @@ type testListObjects struct {
 
 var output = []types.Object{
 	{Key: aws.String("exemplo.html"), Size: aws.Int64(2048), LastModified: aws.Time(time.Now().Add(-24 * time.Hour))},
+	{Key: aws.String("no-such-bucket.html"), Size: aws.Int64(2048), LastModified: aws.Time(time.Now().Add(-24 * time.Hour))},
 }
 
 var testListFile = []testListObjects{
 	{bucketName: "test", maxKeys: 5, expectedOutput: output, expectedError: nil},
+}
+
+type testListBuckets struct {
+	expectedOutput []types.Bucket
+	expectedError  error
+}
+
+var outputBuckets = []types.Bucket{
+	{Name: aws.String("bucket-teste"), CreationDate: aws.Time(time.Now().Add(-240 * time.Hour))},
 }
 
 // Teste para ListObjects

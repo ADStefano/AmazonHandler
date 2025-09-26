@@ -105,12 +105,24 @@ func NewS3ClientMock(mock s3handler.S3Api) *s3handler.Client {
 				return &s3.PresignedPostRequest{}, nil
 			},
 		},
-		Paginator: func(input *s3.ListObjectsV2Input) s3handler.S3Paginator {
-			return &MockPaginator{
+		ObjectPaginator: func(input *s3.ListObjectsV2Input) s3handler.S3ObjectPaginator {
+			return &MockObjectPaginator{
 				Pages: []*s3.ListObjectsV2Output{
 					{
 						Contents: []types.Object{
 							{Key: aws.String("exemplo.html"), Size: aws.Int64(2048), LastModified: aws.Time(time.Now().Add(-24 * time.Hour))},
+						},
+					},
+				},
+				Index: 0,
+			}
+		},
+		BucketPaginator: func(input *s3.ListBucketsInput) s3handler.S3BucketPaginator {
+			return &MockBucketPaginator{
+				Pages: []*s3.ListBucketsOutput{
+					{
+						Buckets: []types.Bucket{
+							{Name: aws.String("bucket-teste"), CreationDate: aws.Time(time.Now().Add(-240 * time.Hour))},
 						},
 					},
 				},

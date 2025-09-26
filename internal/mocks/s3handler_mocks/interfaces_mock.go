@@ -28,9 +28,16 @@ type MockS3Client struct {
 
 var _ s3handler.S3Api = (*MockS3Client)(nil)
 
-// Mock do paginator para testes
-type MockPaginator struct {
+// Mock do paginator de objetos para testes
+type MockObjectPaginator struct {
 	Pages []*s3.ListObjectsV2Output
+	Index int
+	Err   error
+}
+
+// Mock do paginator de buckets para testes
+type MockBucketPaginator struct {
+	Pages []*s3.ListBucketsOutput
 	Index int
 	Err   error
 }
@@ -95,13 +102,28 @@ func (m *MockS3Client) ListBuckets(ctx context.Context, input *s3.ListBucketsInp
 	return nil, nil
 }
 
-// Implementação do método HasMorePages do Mock
-func (m *MockPaginator) HasMorePages() bool {
+// Implementação do método HasMorePages do Mock do paginator de objetos
+func (m *MockObjectPaginator) HasMorePages() bool {
 	return m.Index < len(m.Pages)
 }
 
-// Implementação do método NextPage do Mock
-func (m *MockPaginator) NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListObjectsV2Output, error) {
+// Implementação do método NextPage do Mock do paginator de objetos
+func (m *MockObjectPaginator) NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListObjectsV2Output, error) {
+	if !m.HasMorePages() {
+		return nil, m.Err
+	}
+	page := m.Pages[m.Index]
+	m.Index++
+	return page, nil
+}
+
+// Implementação do método HasMorePages do Mock do paginator de buckets
+func (m *MockBucketPaginator) HasMorePages() bool {
+	return m.Index < len(m.Pages)
+}
+
+// Implementação do método NextPage do Mock do paginator de buckets
+func (m *MockBucketPaginator) NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListBucketsOutput, error) {
 	if !m.HasMorePages() {
 		return nil, m.Err
 	}
