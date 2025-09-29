@@ -109,6 +109,9 @@ func (m *MockObjectPaginator) HasMorePages() bool {
 
 // Implementação do método NextPage do Mock do paginator de objetos
 func (m *MockObjectPaginator) NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListObjectsV2Output, error) {
+	if m.Err != nil {
+		return nil, m.Err
+	}
 	if !m.HasMorePages() {
 		return nil, m.Err
 	}
@@ -124,6 +127,9 @@ func (m *MockBucketPaginator) HasMorePages() bool {
 
 // Implementação do método NextPage do Mock do paginator de buckets
 func (m *MockBucketPaginator) NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListBucketsOutput, error) {
+	if m.Err != nil {
+		return nil, m.Err
+	}
 	if !m.HasMorePages() {
 		return nil, m.Err
 	}

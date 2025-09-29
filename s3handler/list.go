@@ -12,13 +12,17 @@ import (
 )
 
 // ListBuckets lista os buckets do usuário autenticado
-func (client *Client) ListBuckets() ([]types.Bucket, error) {
+func (client *Client) ListBuckets(prefix string) ([]types.Bucket, error) {
 
 	log.Printf("Buscando buckets...")
 
 	var buckets []types.Bucket
 
-	bucketPaginator := client.BucketPaginator(&s3.ListBucketsInput{}) 
+	params := &s3.ListBucketsInput{
+		Prefix: aws.String(prefix),
+	}
+
+	bucketPaginator := client.BucketPaginator(params)
 
 	for bucketPaginator.HasMorePages() {
 
@@ -51,8 +55,13 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 }
 
 // ListObjects lista os objetos dentro de um bucket
-func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Object, error) {
+func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32) ([]types.Object, error) {
 	log.Printf("Buscando objetos no bucket %s", bucketName)
+
+	if bucketName == "" {
+		log.Printf("Nome do bucket não pode ser vazio")
+		return nil, ErrEmptyParam
+	}
 
 	var objects []types.Object
 
@@ -61,9 +70,14 @@ func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Obj
 		maxKeys = 1000
 	}
 
+	if prefix != "" {
+		log.Printf("Utilizando prefixo: %s", prefix)
+	}
+
 	params := &s3.ListObjectsV2Input{
 		Bucket:  aws.String(bucketName),
 		MaxKeys: &maxKeys,
+		Prefix:  aws.String(prefix),
 	}
 
 	paginator := client.ObjectPaginator(params)
