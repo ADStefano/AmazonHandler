@@ -5,7 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch test function",
+            "name": "Main",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go"
+        },
+
+        {
+            "name": "Testes",
             "type": "go",
             "request": "launch",
             "mode": "test",

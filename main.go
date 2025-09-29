@@ -49,7 +49,7 @@ func exemploDeleteObjects(client *s3handler.Client) {
 // Exemplo de uso da função ListBuckets
 func exemploListBuckets(client *s3handler.Client) {
 	log.Println("Listando buckets...")
-	buckets, err := client.ListBuckets()
+	buckets, err := client.ListBuckets("")
 	if err != nil {
 		log.Printf("Erro ao listar buckets: %s", err.Error())
 		return
@@ -64,7 +64,7 @@ func exemploListBuckets(client *s3handler.Client) {
 // Exemplo de uso da função ListObjects
 func exemploListObjects(client *s3handler.Client) {
 	log.Println("Listando objetos...")
-	objects, err := client.ListObjects("teste", 5)
+	objects, err := client.ListObjects("teste", "",5)
 	if err != nil {
 		log.Printf("Erro ao listar objetos: %s", err.Error())
 		return

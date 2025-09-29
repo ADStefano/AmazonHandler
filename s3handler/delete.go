@@ -66,7 +66,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 func (client *Client) EmptyBucket(bucketName string) (bool, error) {
 	log.Printf("Esvaziando bucket %s", bucketName)
 
-	objectsList, err := client.ListObjects(bucketName, 1000)
+	objectsList, err := client.ListObjects(bucketName, "", 1000)
 	if err != nil {
 		log.Printf("Erro ao buscar os objetos do bucket: %s", bucketName)
 		return false, err

@@ -61,11 +61,11 @@ Para rodar os testes:
   
 - [ ] Alterar funções para receberem o contexto
 
-- [ ] Implementar busca por prefixo ao listar objetos 
+- [x] Implementar busca por prefixo ao listar objetos 
 
 - [ ] Melhorar logs
 
-- [ ] Aumentar a cobertura dos testes unitários
+- [x] Aumentar a cobertura dos testes unitários
 
 - [ ] Ajustar go mod para importar como package em outros projetos
 

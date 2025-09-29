@@ -105,12 +105,51 @@ func NewS3ClientMock(mock s3handler.S3Api) *s3handler.Client {
 				return &s3.PresignedPostRequest{}, nil
 			},
 		},
-		Paginator: func(input *s3.ListObjectsV2Input) s3handler.S3Paginator {
-			return &MockPaginator{
+		ObjectPaginator: func(input *s3.ListObjectsV2Input) s3handler.S3ObjectPaginator {
+			if *input.Bucket == "no-such-bucket" {
+				return &MockObjectPaginator{
+					Err: s3handler.ErrNoSuchBucket,
+					Pages: []*s3.ListObjectsV2Output{
+						{
+							Contents: []types.Object{
+								{Key: aws.String("exemplo.html"), Size: aws.Int64(2048), LastModified: aws.Time(time.Now().Add(-24 * time.Hour))},
+							},
+						},
+					},
+					Index: 0,
+			}
+			}
+			return &MockObjectPaginator{
 				Pages: []*s3.ListObjectsV2Output{
 					{
 						Contents: []types.Object{
 							{Key: aws.String("exemplo.html"), Size: aws.Int64(2048), LastModified: aws.Time(time.Now().Add(-24 * time.Hour))},
+						},
+					},
+				},
+				Index: 0,
+			}
+		},
+		BucketPaginator: func(input *s3.ListBucketsInput) s3handler.S3BucketPaginator {
+			if *input.Prefix == "access-denied"{
+				return &MockBucketPaginator{
+					Err: s3handler.ErrAccessDenied,
+					Pages: []*s3.ListBucketsOutput{
+						{
+							Buckets: []types.Bucket{
+								{Name: aws.String("bucket-teste"), CreationDate: aws.Time(time.Now().Add(-240 * time.Hour))},
+							},
+						},
+					},
+					Index: 0,
+				}
+			}
+			return &MockBucketPaginator{
+				Err: nil,
+				Pages: []*s3.ListBucketsOutput{
+					{
+						Buckets: []types.Bucket{
+							{Name: aws.String("bucket-teste"), CreationDate: aws.Time(time.Now().Add(-240 * time.Hour))},
 						},
 					},
 				},

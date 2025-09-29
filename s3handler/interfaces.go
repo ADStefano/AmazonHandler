@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/signer/v4"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -21,14 +21,23 @@ type S3Api interface {
 	GetObject(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error)
 }
 
-// Interface para o paginador do S3
-type S3Paginator interface {
+// Interface para o paginador de objetos do S3
+type S3ObjectPaginator interface {
 	HasMorePages() bool
 	NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListObjectsV2Output, error)
 }
 
-// Função para criar um paginador do S3
-type CreatePaginator func(input *s3.ListObjectsV2Input) S3Paginator
+// Função para criar um paginador de objetos do S3
+type CreateObjectPaginator func(input *s3.ListObjectsV2Input) S3ObjectPaginator
+
+// Interface para o paginador de objetos do S3
+type S3BucketPaginator interface {
+	HasMorePages() bool
+	NextPage(ctx context.Context, optFns ...func(*s3.Options)) (*s3.ListBucketsOutput, error)
+}
+
+// Função para criar um paginador de objetos do S3
+type CreateBucketPaginator func(input *s3.ListBucketsInput) S3BucketPaginator
 
 // Interface para o waiter de objeto não existente do S3
 type S3NewObjectNotExists interface {
