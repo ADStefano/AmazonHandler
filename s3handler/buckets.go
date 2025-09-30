@@ -12,7 +12,7 @@ import (
 )
 
 // CreateBucket cria um bucket S3 caso não exista
-func (client *Client) CreateBucket(bucketName string) (bool, error) {
+func (client *Client) CreateBucket(bucketName string, ctx context.Context) (bool, error) {
 
 	log.Printf("Criando bucket: %s\n", bucketName)
 
@@ -22,7 +22,7 @@ func (client *Client) CreateBucket(bucketName string) (bool, error) {
 			LocationConstraint: types.BucketLocationConstraint("sa-east-1"),
 		},
 	}
-	_, err := client.S3Client.CreateBucket(context.TODO(), params)
+	_, err := client.S3Client.CreateBucket(ctx, params)
 	if err != nil {
 
 		if errors.As(err, &ErrOwned) {
@@ -42,14 +42,14 @@ func (client *Client) CreateBucket(bucketName string) (bool, error) {
 }
 
 // DeleteBucket apaga um bucket do S3 (O bucket precisa estar vazio)
-func (client *Client) DeleteBucket(bucketName string) (bool, error) {
+func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool, error) {
 	log.Printf("Deletando bucket %s\n", bucketName)
 
 	params := &s3.DeleteBucketInput{
 		Bucket: aws.String(bucketName),
 	}
 
-	_, err := client.S3Client.DeleteBucket(context.TODO(), params)
+	_, err := client.S3Client.DeleteBucket(ctx, params)
 	if err != nil {
 
 		if errors.As(err, &ErrNoSuchBucket) {

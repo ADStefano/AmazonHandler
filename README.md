@@ -59,7 +59,7 @@ Para rodar os testes:
 
 - [x] Implementar Pré signed URLs (upload/download)
   
-- [ ] Alterar funções para receberem o contexto
+- [x] Alterar funções para receberem o contexto
 
 - [x] Implementar busca por prefixo ao listar objetos 
 

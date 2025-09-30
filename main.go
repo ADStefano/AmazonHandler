@@ -15,8 +15,11 @@ import (
 // Exemplo de uso da função CreateBucket
 func exemploCreateBucket(client *s3handler.Client) {
 
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Criando bucket...")
-	_, err := client.CreateBucket("teste")
+	_, err := client.CreateBucket("teste", ctx)
 	if err != nil {
 		log.Printf("Erro ao criar bucket: %s", err.Error())
 	} else {
@@ -26,8 +29,12 @@ func exemploCreateBucket(client *s3handler.Client) {
 
 // Exemplo de uso da função DeleteBucket
 func exemploDeleteBucket(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Deletando bucket...")
-	_, err := client.DeleteBucket("teste")
+	_, err := client.DeleteBucket("teste", ctx)
 	if err != nil {
 		log.Printf("Erro ao deletar bucket: %s", err.Error())
 	} else {
@@ -37,8 +44,12 @@ func exemploDeleteBucket(client *s3handler.Client) {
 
 // Exemplo de uso da função DeleteObjects
 func exemploDeleteObjects(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Deletando objeto...")
-	_, err := client.DeleteObjects([]string{"exemplo-teste/exemplo.html"}, "teste")
+	_, err := client.DeleteObjects([]string{"teste/exemplo.html"}, "teste", ctx)
 	if err != nil {
 		log.Printf("Erro ao deletar objeto: %s", err.Error())
 	} else {
@@ -48,8 +59,12 @@ func exemploDeleteObjects(client *s3handler.Client) {
 
 // Exemplo de uso da função ListBuckets
 func exemploListBuckets(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Listando buckets...")
-	buckets, err := client.ListBuckets("")
+	buckets, err := client.ListBuckets("", ctx)
 	if err != nil {
 		log.Printf("Erro ao listar buckets: %s", err.Error())
 		return
@@ -63,8 +78,12 @@ func exemploListBuckets(client *s3handler.Client) {
 
 // Exemplo de uso da função ListObjects
 func exemploListObjects(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Listando objetos...")
-	objects, err := client.ListObjects("teste", "",5)
+	objects, err := client.ListObjects("teste", "", 5, ctx)
 	if err != nil {
 		log.Printf("Erro ao listar objetos: %s", err.Error())
 		return
@@ -78,8 +97,12 @@ func exemploListObjects(client *s3handler.Client) {
 
 // Exemplo de uso da função Upload
 func exemploUpload(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Fazendo upload de objeto...")
-	_, err := client.UploadS3("teste", "exemplo-teste", "/home/angelo/Documentos/Programação/exemplo.html")
+	_, err := client.UploadS3("teste", "teste1/exemplo-teste", "/home/angelo/Documentos/Programação/exemplo.html", ctx)
 	if err != nil {
 		log.Printf("Erro ao fazer upload: %s", err.Error())
 	} else {
@@ -90,9 +113,12 @@ func exemploUpload(client *s3handler.Client) {
 // Exemplo de uso da função Download
 func exemploDownload(client *s3handler.Client) {
 
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Baixando objeto...")
 
-	output, err := client.DownloadS3("adstefano", "teste/exemplo.html")
+	output, err := client.DownloadS3("teste", "teste1/exemplo-teste/exemplo.html", ctx)
 
 	if err != nil {
 		log.Printf("Erro ao baixar objeto: %s", err.Error())
@@ -120,9 +146,12 @@ func exemploDownload(client *s3handler.Client) {
 
 func exemploGetPresignedURL(client *s3handler.Client) {
 
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Gerando GET URL pré-assinada...")
 
-	url, err := client.GetPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	url, err := client.GetPreSignedURL("teste", "exemplo.html", 300 * time.Second, ctx)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
 		return
@@ -133,9 +162,12 @@ func exemploGetPresignedURL(client *s3handler.Client) {
 
 func exemploPutPresignedURL(client *s3handler.Client) {
 
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	log.Println("Gerando PUT URL pré-assinada...")
 
-	url, err := client.PutPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	url, err := client.PutPreSignedURL("teste", "teste1/exemplo-teste/exemplo.html", 300 * time.Second, ctx)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
 		return
@@ -146,22 +178,32 @@ func exemploPutPresignedURL(client *s3handler.Client) {
 
 func exemploPostPresignedURL(client *s3handler.Client) {
 
+	ctx, cancel := context.WithTimeout(context.Background(), 3000*time.Second)
+	defer cancel()
+
 	log.Println("Gerando POST URL pré-assinada...")
 
-	url, err := client.PostPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	request, err := client.PostPreSignedURL("teste", "teste", 300 * time.Second, ctx)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
 		return
 	}
 
-	log.Printf("URL pré-assinada gerada com sucesso: %s", url.URL)
+	log.Printf("URL pré-assinada gerada com sucesso: %s", request.URL)
+
+	for k, v := range request.Values {
+		log.Printf("Chave: %s, Valor: %s", k, v)
+	}
 }
 
 func exemploDeleteBucketPresignedURL(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	
 	log.Println("Gerando DELETE URL pré-assinada...")
 
-	url, err := client.DeleteBucketPreSignedURL("teste", 300 * time.Second)
+	url, err := client.DeleteBucketPreSignedURL("teste", 300 * time.Second, ctx)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
 		return
@@ -171,10 +213,13 @@ func exemploDeleteBucketPresignedURL(client *s3handler.Client) {
 }
 
 func exemploDeleteObjectPresignedURL(client *s3handler.Client) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	
 	log.Println("Gerando DELETE URL pré-assinada...")
 
-	url, err := client.DeleteObjectPreSignedURL("teste", "teste/exemplo.html", 300 * time.Second)
+	url, err := client.DeleteObjectPreSignedURL("teste", "teste", 300 * time.Second, ctx)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré-assinada: %s", err.Error())
 		return

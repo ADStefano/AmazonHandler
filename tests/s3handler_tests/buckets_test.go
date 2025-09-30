@@ -1,8 +1,9 @@
 package s3handler_test
 
 import (
-	"amazon-handler/s3handler"
 	"amazon-handler/internal/mocks/s3handler_mocks"
+	"amazon-handler/s3handler"
+	"context"
 	"errors"
 	"testing"
 )
@@ -33,7 +34,7 @@ func TestCreateBucket(t *testing.T) {
 	for _, testCase := range testCreateBuckets {
 		t.Run(testCase.testBucketName, func(t *testing.T) {
 
-			output, err := mockClient.CreateBucket(testCase.testBucketName)
+			output, err := mockClient.CreateBucket(testCase.testBucketName, context.Background())
 			if output != testCase.expectedOutput {
 				t.Errorf("Esperado: %v , Recebido: %v\n", testCase.expectedOutput, output)
 			}
@@ -54,7 +55,7 @@ func TestDeleteBucket(t *testing.T) {
 
 			t.Logf("Testando bucket: %s", testCase.testBucketName)
 
-			output, err := mockClient.DeleteBucket(testCase.testBucketName)
+			output, err := mockClient.DeleteBucket(testCase.testBucketName, context.Background())
 
 			if output != testCase.expectedOutput {
 				t.Errorf("Esperado: %v , Recebido: %v\n", testCase.expectedOutput, output)

@@ -2,6 +2,7 @@ package s3handler_test
 
 import (
 	"amazon-handler/s3handler"
+	"context"
 	"errors"
 	"testing"
 )
@@ -23,7 +24,7 @@ var testDeleteObjects = []testDeleteFile{
 func TestDeleteFiles(t *testing.T) {
 	for _, testCase := range testDeleteObjects {
 
-		output, err := mockClient.DeleteObjects(testCase.filesNames, testCase.testBucketName)
+		output, err := mockClient.DeleteObjects(testCase.filesNames, testCase.testBucketName, context.Background())
 
 		t.Logf("Testando bucket: %s, arquivos: %v", testCase.testBucketName, testCase.filesNames)
 
@@ -42,7 +43,7 @@ func TestEmptyBucket(t *testing.T) {
 
 		t.Logf("Testando bucket: %s", testCase.testBucketName)
 
-		output, err := mockClient.EmptyBucket(testCase.testBucketName)
+		output, err := mockClient.EmptyBucket(testCase.testBucketName, context.Background())
 
 		if output != testCase.expectedOutput {
 			t.Errorf("Output diferente do esperado. Nome: %s, Esperado: %v , Recebido: %v\n", testCase.testBucketName, testCase.expectedOutput, output)

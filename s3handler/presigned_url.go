@@ -11,7 +11,7 @@ import (
 )
 
 // GetPreSignedURL gera uma URL GET pré assinada, o tempo de expiração padrão é de 5 minutos
-func (client *Client) GetPreSignedURL(bucketName, objectKey string, expiration time.Duration) (*v4.PresignedHTTPRequest, error) {
+func (client *Client) GetPreSignedURL(bucketName, objectKey string, expiration time.Duration, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
 
 	if bucketName == "" || objectKey == "" {
 		log.Printf("Bucket ou objeto não podem ser vazios")
@@ -34,7 +34,7 @@ func (client *Client) GetPreSignedURL(bucketName, objectKey string, expiration t
 		o.Expires = expiration
 	}
 
-	request, err := client.PresignerClient.PresignGetObject(context.TODO(), params, opts)
+	request, err := client.PresignerClient.PresignGetObject(ctx, params, opts)
 	if err != nil {
 		log.Printf("Erro ao gerar URL pré assinada: %s", err.Error())
 		return nil, err
@@ -44,7 +44,7 @@ func (client *Client) GetPreSignedURL(bucketName, objectKey string, expiration t
 }
 
 // PutPreSignedURL gera uma URL PUT pré assinada, o tempo de expiração padrão é de 5 minutos
-func (client *Client) PutPreSignedURL(bucketName, objectKey string, expiration time.Duration) (*v4.PresignedHTTPRequest, error) {
+func (client *Client) PutPreSignedURL(bucketName, objectKey string, expiration time.Duration, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
 
 	if bucketName == "" || objectKey == "" {
 		log.Printf("Bucket ou objeto não podem ser vazios")
@@ -67,13 +67,13 @@ func (client *Client) PutPreSignedURL(bucketName, objectKey string, expiration t
 		o.Expires = expiration
 	}
 
-	request, err := client.PresignerClient.PresignPutObject(context.TODO(), params, opts)
+	request, err := client.PresignerClient.PresignPutObject(ctx, params, opts)
 
 	return request, err
 }
 
 // DeleteObjectPreSignedURL gera uma URL DELETE pré assinada para objetos dentro de um bucket, o tempo de expiração padrão é de 5 minutos
-func (client *Client) DeleteObjectPreSignedURL(bucketName, objectKey string, expiration time.Duration) (*v4.PresignedHTTPRequest, error) {
+func (client *Client) DeleteObjectPreSignedURL(bucketName, objectKey string, expiration time.Duration, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
 
 	if bucketName == "" || objectKey == "" {
 		log.Printf("Bucket ou objeto não podem ser vazios")
@@ -96,13 +96,13 @@ func (client *Client) DeleteObjectPreSignedURL(bucketName, objectKey string, exp
 		o.Expires = expiration
 	}
 
-	request, err := client.PresignerClient.PresignDeleteObject(context.TODO(), params, opts)
+	request, err := client.PresignerClient.PresignDeleteObject(ctx, params, opts)
 
 	return request, err
 }
 
 // DeleteObjectPreSignedURL gera uma URL DELETE pré assinada para buckets, o tempo de expiração padrão é de 5 minutos
-func (client *Client) DeleteBucketPreSignedURL(bucketName string, expiration time.Duration) (*v4.PresignedHTTPRequest, error) {
+func (client *Client) DeleteBucketPreSignedURL(bucketName string, expiration time.Duration, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
 
 	if bucketName == "" {
 		log.Printf("Bucket ou objeto não podem ser vazios")
@@ -124,13 +124,13 @@ func (client *Client) DeleteBucketPreSignedURL(bucketName string, expiration tim
 		o.Expires = expiration
 	}
 
-	request, err := client.PresignerClient.PresignDeleteBucket(context.TODO(), params, opts)
+	request, err := client.PresignerClient.PresignDeleteBucket(ctx, params, opts)
 
 	return request, err
 }
 
 // PostPreSignedURL gera uma URL POST pré assinada, o tempo de expiração padrão é de 5 minutos
-func (client *Client) PostPreSignedURL(bucketName, objectKey string, expiration time.Duration) (*s3.PresignedPostRequest, error) {
+func (client *Client) PostPreSignedURL(bucketName, objectKey string, expiration time.Duration, ctx context.Context) (*s3.PresignedPostRequest, error) {
 
 	if bucketName == "" || objectKey == "" {
 		log.Printf("Bucket ou objeto não podem ser vazios")
@@ -153,7 +153,7 @@ func (client *Client) PostPreSignedURL(bucketName, objectKey string, expiration 
 		o.Expires = expiration
 	}
 
-	request, err := client.PresignerClient.PresignPostObject(context.TODO(), params, opts)
+	request, err := client.PresignerClient.PresignPostObject(ctx, params, opts)
 
 	return request, err
 

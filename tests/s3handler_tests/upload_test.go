@@ -2,6 +2,7 @@ package s3handler_test
 
 import (
 	"amazon-handler/s3handler"
+	"context"
 	"errors"
 	"testing"
 )
@@ -41,7 +42,7 @@ var testUploadCases = []TestUpload{
 func TestUploads(t *testing.T) {
 	for _, testCase := range testUploadCases {
 		t.Run(testCase.Path, func(t *testing.T) {
-			output, err := mockClient.UploadS3(testCase.TestBucketName, testCase.Prefix, testCase.Path)
+			output, err := mockClient.UploadS3(testCase.TestBucketName, testCase.Prefix, testCase.Path, context.Background())
 
 			if output != testCase.ExpectedOutput {
 				t.Errorf("Output esperado %v, recebido %v", testCase.ExpectedOutput, output)
