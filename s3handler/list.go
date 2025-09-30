@@ -1,4 +1,4 @@
-package s3
+package s3handler
 
 import (
 	"context"
@@ -11,14 +11,18 @@ import (
 	"github.com/aws/smithy-go"
 )
 
-// ListBuckets lista os buckets
-func (client *Client) ListBuckets() ([]types.Bucket, error) {
+// ListBuckets lista os buckets do usuário autenticado
+func (client *Client) ListBuckets(prefix string) ([]types.Bucket, error) {
 
 	log.Printf("Buscando buckets...")
 
 	var buckets []types.Bucket
 
-	bucketPaginator := s3.NewListBucketsPaginator(client.s3Client, &s3.ListBucketsInput{})
+	params := &s3.ListBucketsInput{
+		Prefix: aws.String(prefix),
+	}
+
+	bucketPaginator := client.BucketPaginator(params)
 
 	for bucketPaginator.HasMorePages() {
 
@@ -26,13 +30,13 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 
 		if err != nil {
 
-			var apiErr smithy.APIError
+			var errApi smithy.APIError
 
-			if errors.As(err, &apiErr) && apiErr.ErrorCode() == "AccessDenied" {
+			if errors.As(err, &errApi) && errApi.ErrorCode() == "AccessDenied" {
 
-				log.Printf("Acesso negado ao listar buckets: %s\n", apiErr.ErrorMessage())
+				log.Printf("Acesso negado ao listar buckets: %s\n", errApi.ErrorMessage())
 
-				return nil, errors.New("acesso negado ao listar buckets")
+				return nil, ErrAccessDenied
 
 			} else {
 
@@ -50,9 +54,14 @@ func (client *Client) ListBuckets() ([]types.Bucket, error) {
 	return buckets, nil
 }
 
-// ListObjects lista os objetos dentro de um bucket TODO ADD PREFIX
-func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Object, error) {
+// ListObjects lista os objetos dentro de um bucket
+func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32) ([]types.Object, error) {
 	log.Printf("Buscando objetos no bucket %s", bucketName)
+
+	if bucketName == "" {
+		log.Printf("Nome do bucket não pode ser vazio")
+		return nil, ErrEmptyParam
+	}
 
 	var objects []types.Object
 
@@ -61,12 +70,17 @@ func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Obj
 		maxKeys = 1000
 	}
 
+	if prefix != "" {
+		log.Printf("Utilizando prefixo: %s", prefix)
+	}
+
 	params := &s3.ListObjectsV2Input{
 		Bucket:  aws.String(bucketName),
 		MaxKeys: &maxKeys,
+		Prefix:  aws.String(prefix),
 	}
 
-	paginator := client.paginator(params)
+	paginator := client.ObjectPaginator(params)
 
 	for paginator.HasMorePages() {
 
@@ -74,17 +88,14 @@ func (client *Client) ListObjects(bucketName string, maxKeys int32) ([]types.Obj
 
 		if err != nil {
 
-			var noBucket *types.NoSuchBucket
-
-			if errors.As(err, &noBucket) {
+			if errors.As(err, &ErrNoSuchBucket) {
 
 				log.Printf("Bucket %s não existe.\n", bucketName)
 				return nil, err
 
 			} else {
 
-				log.Printf("Erro ao buscar os objetos no bucket: %s\n", err)
-				log.Panicf("Erro: %e", err)
+				log.Printf("Erro ao buscar os objetos no bucket %s: %s\n", bucketName, err)
 				return nil, err
 			}
 

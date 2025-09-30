@@ -1,4 +1,4 @@
-package s3
+package s3handler
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-// DeleteObjects apaga um ou mais objetos do bucket S3 // TODO renomear para delete objects
+// DeleteObjects apaga um ou mais objetos do bucket S3
 func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, error) {
 	log.Printf("Deletando objeto(s) %s do bucket %s \n", objKey, bucketName)
 
@@ -25,13 +25,12 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 		Delete: &types.Delete{Objects: objectIds},
 	}
 
-	output, err := client.s3Client.DeleteObjects(context.TODO(), params)
+	output, err := client.S3Client.DeleteObjects(context.TODO(), params)
 
 	if err != nil {
-		var noBucket *types.NoSuchBucket
-		if errors.As(err, &noBucket) {
+		if errors.As(err, &ErrNoSuchBucket) {
 			log.Printf("Bucket %s não encontrado", bucketName)
-			return false, noBucket
+			return false, ErrNoSuchBucket
 		} else {
 			log.Printf("Erro ao deletar objeto(s) do bucket %s: %s \n", bucketName, err.Error())
 			return false, err
@@ -51,7 +50,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 
 		input := &s3.HeadObjectInput{Bucket: aws.String(bucketName), Key: delObj.Key}
 
-		err = client.objNotExistWaiter().Wait(context.TODO(), input, time.Minute)
+		err = client.ObjNotExistWaiter().Wait(context.TODO(), input, time.Minute)
 		if err != nil {
 			log.Printf("Erro ao aguardar o objeto ser deletado: %s", *delObj.Key)
 			return false, ErrWaiterTimeout
@@ -67,7 +66,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 func (client *Client) EmptyBucket(bucketName string) (bool, error) {
 	log.Printf("Esvaziando bucket %s", bucketName)
 
-	objectsList, err := client.ListObjects(bucketName, 1000)
+	objectsList, err := client.ListObjects(bucketName, "", 1000)
 	if err != nil {
 		log.Printf("Erro ao buscar os objetos do bucket: %s", bucketName)
 		return false, err

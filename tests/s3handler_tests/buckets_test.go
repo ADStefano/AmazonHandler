@@ -1,9 +1,10 @@
-package s3_test
+package s3handler_test
 
 import (
+	"amazon-handler/s3handler"
+	"amazon-handler/internal/mocks/s3handler_mocks"
 	"errors"
 	"testing"
-	"amazon-handler/s3"
 )
 
 type testBucket struct {
@@ -12,18 +13,18 @@ type testBucket struct {
 	expectedError  error
 }
 
-var mockClient = s3.CreateS3ClientMock()
+var mockClient = mock.CreateS3ClientMock()
 
 var testCreateBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
-	{testBucketName: "bucket-exists", expectedOutput: false, expectedError: s3.Exists},
-	{testBucketName: "bucket-owned", expectedOutput: false, expectedError:s3.Owned},
+	{testBucketName: "bucket-exists", expectedOutput: false, expectedError: s3handler.ErrExists},
+	{testBucketName: "bucket-owned", expectedOutput: false, expectedError: s3handler.ErrOwned},
 }
 
 var TestDeleteBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
-	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3.NoBucket},
-	{testBucketName: "bucket-timeout", expectedOutput: false, expectedError: s3.ErrWaiterTimeout},
+	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3handler.ErrNoSuchBucket},
+	{testBucketName: "bucket-timeout", expectedOutput: false, expectedError: s3handler.ErrWaiterTimeout},
 }
 
 // Teste para CreateBucket
