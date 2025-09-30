@@ -178,7 +178,7 @@ func exemploPutPresignedURL(client *s3handler.Client) {
 
 func exemploPostPresignedURL(client *s3handler.Client) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3000*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	log.Println("Gerando POST URL pré-assinada...")
