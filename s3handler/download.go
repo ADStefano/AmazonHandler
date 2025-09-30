@@ -11,7 +11,7 @@ import (
 )
 
 // Download baixa um objeto do bucket S3
-func (client *Client) DownloadS3(bucketName, objectKey string) (*s3.GetObjectOutput, error) {
+func (client *Client) DownloadS3(bucketName, objectKey string, ctx context.Context) (*s3.GetObjectOutput, error) {
 	log.Printf("Baixando objeto: %s do bucket: %s", objectKey, bucketName)
 
 	input := &s3.GetObjectInput{
@@ -19,7 +19,7 @@ func (client *Client) DownloadS3(bucketName, objectKey string) (*s3.GetObjectOut
 		Key:    aws.String(objectKey),
 	}
 
-	output, err := client.S3Client.GetObject(context.TODO(), input)
+	output, err := client.S3Client.GetObject(ctx, input)
 
 	if err != nil {
 

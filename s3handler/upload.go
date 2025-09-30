@@ -13,7 +13,7 @@ import (
 )
 
 // Upload faz upload do objeto para o bucket S3 (Objetos de até 5GB) e cria um bucket baseado no prefix se não existir.
-func (client *Client) UploadS3(bucketName, prefix, path string) (bool, error) {
+func (client *Client) UploadS3(bucketName, prefix, path string, ctx context.Context) (bool, error) {
 
 	filename := filepath.Base(path)
 	log.Printf("Fazendo upload do arquivo: %s para o bucket: %s", filename, bucketName)
@@ -36,7 +36,7 @@ func (client *Client) UploadS3(bucketName, prefix, path string) (bool, error) {
 		Body:   file,
 	}
 
-	_, err = client.S3Client.PutObject(context.TODO(), input)
+	_, err = client.S3Client.PutObject(ctx, input)
 	if err != nil {
 
 		var errApi smithy.APIError

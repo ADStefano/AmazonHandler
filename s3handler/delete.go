@@ -12,7 +12,7 @@ import (
 )
 
 // DeleteObjects apaga um ou mais objetos do bucket S3
-func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, error) {
+func (client *Client) DeleteObjects(objKey []string, bucketName string, ctx context.Context) (bool, error) {
 	log.Printf("Deletando objeto(s) %s do bucket %s \n", objKey, bucketName)
 
 	var objectIds []types.ObjectIdentifier
@@ -25,7 +25,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 		Delete: &types.Delete{Objects: objectIds},
 	}
 
-	output, err := client.S3Client.DeleteObjects(context.TODO(), params)
+	output, err := client.S3Client.DeleteObjects(ctx, params)
 
 	if err != nil {
 		if errors.As(err, &ErrNoSuchBucket) {
@@ -50,7 +50,7 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 
 		input := &s3.HeadObjectInput{Bucket: aws.String(bucketName), Key: delObj.Key}
 
-		err = client.ObjNotExistWaiter().Wait(context.TODO(), input, time.Minute)
+		err = client.ObjNotExistWaiter().Wait(ctx, input, time.Minute)
 		if err != nil {
 			log.Printf("Erro ao aguardar o objeto ser deletado: %s", *delObj.Key)
 			return false, ErrWaiterTimeout
@@ -63,10 +63,10 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string) (bool, e
 }
 
 // EmptyBucket esvazia um bucket do S3
-func (client *Client) EmptyBucket(bucketName string) (bool, error) {
+func (client *Client) EmptyBucket(bucketName string, ctx context.Context) (bool, error) {
 	log.Printf("Esvaziando bucket %s", bucketName)
 
-	objectsList, err := client.ListObjects(bucketName, "", 1000)
+	objectsList, err := client.ListObjects(bucketName, "", 1000, ctx)
 	if err != nil {
 		log.Printf("Erro ao buscar os objetos do bucket: %s", bucketName)
 		return false, err
@@ -78,7 +78,7 @@ func (client *Client) EmptyBucket(bucketName string) (bool, error) {
 		deleteList = append(deleteList, *item.Key)
 	}
 
-	_, err = client.DeleteObjects(deleteList, bucketName)
+	_, err = client.DeleteObjects(deleteList, bucketName, ctx)
 	if err != nil {
 		log.Printf("Erro ao esvaziar bucket: %s, erro ao deletar objetos: %s", bucketName, deleteList)
 		return false, err

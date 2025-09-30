@@ -12,7 +12,7 @@ import (
 )
 
 // ListBuckets lista os buckets do usuário autenticado
-func (client *Client) ListBuckets(prefix string) ([]types.Bucket, error) {
+func (client *Client) ListBuckets(prefix string, ctx context.Context) ([]types.Bucket, error) {
 
 	log.Printf("Buscando buckets...")
 
@@ -26,7 +26,7 @@ func (client *Client) ListBuckets(prefix string) ([]types.Bucket, error) {
 
 	for bucketPaginator.HasMorePages() {
 
-		output, err := bucketPaginator.NextPage(context.TODO())
+		output, err := bucketPaginator.NextPage(ctx)
 
 		if err != nil {
 
@@ -55,7 +55,7 @@ func (client *Client) ListBuckets(prefix string) ([]types.Bucket, error) {
 }
 
 // ListObjects lista os objetos dentro de um bucket
-func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32) ([]types.Object, error) {
+func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32, ctx context.Context) ([]types.Object, error) {
 	log.Printf("Buscando objetos no bucket %s", bucketName)
 
 	if bucketName == "" {
@@ -84,7 +84,7 @@ func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32) ([]t
 
 	for paginator.HasMorePages() {
 
-		output, err := paginator.NextPage(context.TODO())
+		output, err := paginator.NextPage(ctx)
 
 		if err != nil {
 

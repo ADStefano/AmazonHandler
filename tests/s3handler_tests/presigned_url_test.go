@@ -2,6 +2,7 @@ package s3handler_test
 
 import (
 	"amazon-handler/s3handler"
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -94,7 +95,7 @@ func TestGetPresignURL(t *testing.T) {
 
 			t.Logf("Testando bucket: %s, objectKey: %s, expiration: %s", testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
 
-			output, err := mockClient.GetPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
+			output, err := mockClient.GetPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration, context.Background())
 
 			if testCase.ExpectedOutput != nil && output != nil {
 				if testCase.ExpectedOutput.URL != output.URL {
@@ -116,7 +117,7 @@ func TestPutPresignURL(t *testing.T) {
 
 			t.Logf("Testando bucket: %s, objectKey: %s, expiration: %s", testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
 
-			output, err := mockClient.PutPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
+			output, err := mockClient.PutPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration, context.Background())
 
 			if testCase.ExpectedOutput != nil && output != nil {
 				if testCase.ExpectedOutput.URL != output.URL {
@@ -138,7 +139,7 @@ func TestDeleteObjectPresignURL(t *testing.T) {
 
 			t.Logf("Testando bucket: %s, objectKey: %s, expiration: %s", testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
 
-			output, err := mockClient.DeleteObjectPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
+			output, err := mockClient.DeleteObjectPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration, context.Background())
 
 			if testCase.ExpectedOutput != nil && output != nil {
 				if testCase.ExpectedOutput.URL != output.URL {
@@ -160,7 +161,7 @@ func TestDeleteBucketPresignURL(t *testing.T) {
 
 			t.Logf("Testando bucket: %s, objectKey: %s, expiration: %s", testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
 
-			output, err := mockClient.DeleteBucketPreSignedURL(testCase.TestBucketName, testCase.TestExpiration)
+			output, err := mockClient.DeleteBucketPreSignedURL(testCase.TestBucketName, testCase.TestExpiration, context.Background())
 
 			if testCase.ExpectedOutput != nil && output != nil {
 				if testCase.ExpectedOutput.URL != output.URL {
@@ -182,7 +183,7 @@ func TestPostPresignURL(t *testing.T) {
 
 			t.Logf("Testando bucket: %s, objectKey: %s, expiration: %s", testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
 
-			output, err := mockClient.PostPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration)
+			output, err := mockClient.PostPreSignedURL(testCase.TestBucketName, testCase.TestObjectKey, testCase.TestExpiration, context.Background())
 
 			if testCase.ExpectedOutput != nil && output != nil {
 				if testCase.ExpectedOutput.URL != output.URL {

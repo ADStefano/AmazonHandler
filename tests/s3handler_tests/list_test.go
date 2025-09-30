@@ -2,6 +2,7 @@ package s3handler_test
 
 import (
 	"amazon-handler/s3handler"
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -25,7 +26,7 @@ var output = []types.Object{
 
 var testListFile = []testListObjects{
 	{testName: "Teste - Sucesso", bucketName: "test", prefix: "", maxKeys: 5, expectedOutput: output, expectedError: nil},
-	{testName: "Teste - Erro: No Such Bucket", bucketName: "no-such-bucket", prefix: "",  maxKeys: 5, expectedOutput: output, expectedError: s3handler.ErrNoSuchBucket},
+	{testName: "Teste - Erro: No Such Bucket", bucketName: "no-such-bucket", prefix: "", maxKeys: 5, expectedOutput: output, expectedError: s3handler.ErrNoSuchBucket},
 }
 
 type listBuckets struct {
@@ -53,7 +54,7 @@ func TestListObjects(t *testing.T) {
 
 			t.Logf("Testando bucket: %s, maxKeys: %d", testCase.bucketName, testCase.maxKeys)
 
-			output, err := mockClient.ListObjects(testCase.bucketName, testCase.prefix, testCase.maxKeys)
+			output, err := mockClient.ListObjects(testCase.bucketName, testCase.prefix, testCase.maxKeys, context.Background())
 
 			for _, outputItem := range testCase.expectedOutput {
 				for _, item := range output {
@@ -82,7 +83,7 @@ func TestListBuckets(t *testing.T) {
 
 			t.Logf("%s - Testando bucket: %s", testCase.testName, testCase.bucketName)
 
-			output, err := mockClient.ListBuckets(testCase.prefix)
+			output, err := mockClient.ListBuckets(testCase.prefix, context.Background())
 
 			for _, outputItem := range testCase.expectedOutput {
 				for _, item := range output {

@@ -2,6 +2,7 @@ package s3handler_test
 
 import (
 	"amazon-handler/s3handler"
+	"context"
 	"errors"
 	"testing"
 
@@ -44,7 +45,7 @@ func TestDownloadFunc(t *testing.T) {
 
 			t.Logf("Testando Download do bucket: %s, objeto: %s", testCase.TestBucketName, testCase.TestObjectKey)
 
-			output, err := mockClient.DownloadS3(testCase.TestBucketName, testCase.TestObjectKey)
+			output, err := mockClient.DownloadS3(testCase.TestBucketName, testCase.TestObjectKey, context.Background())
 
 			if testCase.ExpectedOutput != nil {
 				if output == nil {
