@@ -2,13 +2,11 @@ package s3handler
 
 import (
 	"context"
-	"errors"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/aws/smithy-go"
 )
 
 // ListBuckets lista os buckets do usuário autenticado
@@ -30,19 +28,12 @@ func (client *Client) ListBuckets(prefix string, ctx context.Context) ([]types.B
 
 		if err != nil {
 
-			var errApi smithy.APIError
+			parsedErr := ParseError(err)
 
-			if errors.As(err, &errApi) && errApi.ErrorCode() == "AccessDenied" {
-
-				log.Printf("Acesso negado ao listar buckets: %s\n", errApi.ErrorMessage())
-
-				return nil, ErrAccessDenied
-
-			} else {
-
-				log.Printf("Erro ao listar buckets: %s\n", err)
-
-				return nil, err
+			return nil, &S3Error{
+				Operation: "ListBuckets",
+				Message:   "ListBucketsError",
+				Err:       parsedErr,
 			}
 		}
 
@@ -88,15 +79,13 @@ func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32, ctx 
 
 		if err != nil {
 
-			if errors.As(err, &ErrNoSuchBucket) {
+			parsedErr := ParseError(err)
 
-				log.Printf("Bucket %s não existe.\n", bucketName)
-				return nil, err
-
-			} else {
-
-				log.Printf("Erro ao buscar os objetos no bucket %s: %s\n", bucketName, err)
-				return nil, err
+			return nil, &S3Error{
+				Operation: "ListObjects",
+				Bucket:    bucketName,
+				Message:   "ListObjectsError",
+				Err:       parsedErr,
 			}
 
 		} else {
