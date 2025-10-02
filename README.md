@@ -53,7 +53,7 @@ Para rodar os testes:
 
 - [x]  Implementar errors.go com erros padronizados
 
-- [ ]  Expandir errors.go para utilizar structs e parse padronizando ApiErr
+- [x]  Expandir errors.go para utilizar structs e parse padronizando ApiErr
 
 - [x]  Implementar arquivos de interface com verificação de implementação
 
@@ -63,7 +63,7 @@ Para rodar os testes:
 
 - [x] Implementar busca por prefixo ao listar objetos 
 
-- [ ] Melhorar logs
+- [ ] Melhorar/Remover logs
 
 - [x] Aumentar a cobertura dos testes unitários
 

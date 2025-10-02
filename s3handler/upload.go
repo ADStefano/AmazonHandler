@@ -2,18 +2,27 @@ package s3handler
 
 import (
 	"context"
-	"errors"
 	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/smithy-go"
 )
 
 // Upload faz upload do objeto para o bucket S3 (Objetos de até 5GB) e cria um bucket baseado no prefix se não existir.
 func (client *Client) UploadS3(bucketName, prefix, path string, ctx context.Context) (bool, error) {
+
+	if bucketName == "" || path == "" {
+		log.Printf("Nome do bucket ou caminho do arquivo vazio")
+		return false, &S3Error{
+			Operation: "upload",
+			Bucket:    bucketName,
+			Object:    path,
+			Message:   "ErrEmptyParam",
+			Err:       ErrEmptyParam,
+		}
+	}
 
 	filename := filepath.Base(path)
 	log.Printf("Fazendo upload do arquivo: %s para o bucket: %s", filename, bucketName)
@@ -39,15 +48,17 @@ func (client *Client) UploadS3(bucketName, prefix, path string, ctx context.Cont
 	_, err = client.S3Client.PutObject(ctx, input)
 	if err != nil {
 
-		var errApi smithy.APIError
-
-		if errors.As(err, &errApi) && errApi.ErrorCode() == "EntityTooLarge" {
-			log.Printf("O arquivo %s é muito grande para ser enviado para o bucket %s", filename, bucketName)
-			return false, ErrEntityTooLarge
-		}
+		parsedErr := ParseError(err)
 
 		log.Printf("Erro ao fazer upload do objeto: %s, para o bucket: %s, prefixo: %s, erro: %s", filename, bucketName, prefix, err)
-		return false, err
+
+		return false, &S3Error{
+			Operation: "upload",
+			Bucket:    bucketName,
+			Object:    key,
+			Message:   "PutObjectError",
+			Err:       parsedErr,
+		}
 	}
 
 	return true, nil

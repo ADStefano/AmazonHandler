@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -14,6 +13,15 @@ import (
 // CreateBucket cria um bucket S3 caso não exista
 func (client *Client) CreateBucket(bucketName string, ctx context.Context) (bool, error) {
 
+	if bucketName == "" {
+		return false, &S3Error{
+			Operation: "CreateBucket",
+			Bucket:    bucketName,
+			Message:   "EmptyBucketName",
+			Err:       ErrEmptyParam,
+		}
+	}
+
 	log.Printf("Criando bucket: %s\n", bucketName)
 
 	params := &s3.CreateBucketInput{
@@ -24,25 +32,30 @@ func (client *Client) CreateBucket(bucketName string, ctx context.Context) (bool
 	}
 	_, err := client.S3Client.CreateBucket(ctx, params)
 	if err != nil {
-
-		if errors.As(err, &ErrOwned) {
-			log.Printf("Você já criou um bucket com esse nome: %s", bucketName)
-			return false, ErrOwned
-		} else if errors.As(err, &ErrExists) {
-			log.Printf("Bucket: %s já existe", bucketName)
-			return false, ErrExists
-		} else {
-			log.Printf("Não foi possível criar o bucket %s", err.Error())
-			return false, err
+		parsedErr := ParseError(err)
+		return false, &S3Error{
+			Operation: "CreateBucket",
+			Bucket:    bucketName,
+			Message:   "CreateBucketError",
+			Err:       parsedErr,
 		}
 	}
-
 	log.Printf("Bucket %s criado com sucesso", bucketName)
 	return true, nil
 }
 
 // DeleteBucket apaga um bucket do S3 (O bucket precisa estar vazio)
 func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool, error) {
+
+	if bucketName == "" {
+		return false, &S3Error{
+			Operation: "DeleteBucket",
+			Bucket:    bucketName,
+			Message:   "EmptyBucketName",
+			Err:       ErrEmptyParam,
+		}
+	}
+
 	log.Printf("Deletando bucket %s\n", bucketName)
 
 	params := &s3.DeleteBucketInput{
@@ -51,13 +64,12 @@ func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool
 
 	_, err := client.S3Client.DeleteBucket(ctx, params)
 	if err != nil {
-
-		if errors.As(err, &ErrNoSuchBucket) {
-			log.Printf("Bucket %s não encontrado", bucketName)
-			return false, ErrNoSuchBucket
-		} else {
-			log.Printf("Erro ao deletar bucket %s: %v", bucketName, err)
-			return false, err
+		parsedErr := ParseError(err)
+		return false, &S3Error{
+			Operation: "DeleteBucket",
+			Bucket:    bucketName,
+			Message:   "DeleteBucketError",
+			Err:       parsedErr,
 		}
 	} else {
 		headBucketParams := &s3.HeadBucketInput{
@@ -67,7 +79,12 @@ func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool
 		err = client.BucketNotExistsWaiter().Wait(context.TODO(), headBucketParams, time.Minute)
 		if err != nil {
 			log.Printf("Erro ao esperar bucket %s ser deletado", bucketName)
-			return false, ErrWaiterTimeout
+			return false, &S3Error{
+				Operation: "DeleteBucket",
+				Bucket:    bucketName,
+				Message:   "WaiterTimeout",
+				Err:       ErrWaiterTimeout,
+			}
 		}
 	}
 

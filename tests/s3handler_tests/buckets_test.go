@@ -20,12 +20,14 @@ var testCreateBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
 	{testBucketName: "bucket-exists", expectedOutput: false, expectedError: s3handler.ErrExists},
 	{testBucketName: "bucket-owned", expectedOutput: false, expectedError: s3handler.ErrOwned},
+	{testBucketName: "", expectedOutput: false, expectedError: s3handler.ErrEmptyParam},
 }
 
 var TestDeleteBuckets = []testBucket{
 	{testBucketName: "test", expectedOutput: true, expectedError: nil},
 	{testBucketName: "no-bucket", expectedOutput: false, expectedError: s3handler.ErrNoSuchBucket},
 	{testBucketName: "bucket-timeout", expectedOutput: false, expectedError: s3handler.ErrWaiterTimeout},
+	{testBucketName: "", expectedOutput: false, expectedError: s3handler.ErrEmptyParam},
 }
 
 // Teste para CreateBucket
