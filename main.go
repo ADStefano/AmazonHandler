@@ -102,7 +102,7 @@ func exemploUpload(client *s3handler.Client) {
 	defer cancel()
 
 	log.Println("Fazendo upload de objeto...")
-	_, err := client.UploadS3("teste", "teste1/exemplo-teste", "/home/angelo/Documentos/Programação/exemplo.html", ctx)
+	_, err := client.UploadS3("teste", "teste1/exemplo-teste", "/home/angelo/Testes/exemplo.html", ctx)
 	if err != nil {
 		log.Printf("Erro ao fazer upload: %s", err.Error())
 	} else {

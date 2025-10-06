@@ -3,7 +3,6 @@ package mock
 import (
 	"amazon-handler/s3handler"
 	"context"
-	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -14,8 +13,6 @@ import (
 
 // Mock da inicialização do S3
 func NewS3ClientMock(mock s3handler.S3Api) *s3handler.Client {
-
-	log.Println("Carregando interface mock")
 
 	return &s3handler.Client{
 		S3Client: mock,

@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -23,15 +22,12 @@ func (client *Client) GetPreSignedURL(bucketName, objectKey string, expiration t
 		}
 	}
 
-	log.Printf("Gerando Presigned Get URL para o objeto: %s no bucket: %s com expiração de: %s", objectKey, bucketName, expiration)
-
 	params := &s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
 	}
 
 	if expiration <= 0 {
-		log.Printf("Valor de expiração menor ou igual a zero, utilizando padrão de 5 minutos")
 		expiration = 5 * time.Minute
 	}
 
@@ -67,15 +63,12 @@ func (client *Client) PutPreSignedURL(bucketName, objectKey string, expiration t
 		}
 	}
 
-	log.Printf("Gerando Presigned Put URL para o objeto: %s no bucket: %s com expiração de: %s", objectKey, bucketName, expiration)
-
 	params := &s3.PutObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
 	}
 
 	if expiration <= 0 {
-		log.Printf("Valor de expiração menor ou igual a zero, utilizando padrão de 5 minutos")
 		expiration = 5 * time.Minute
 	}
 
@@ -112,15 +105,12 @@ func (client *Client) DeleteObjectPreSignedURL(bucketName, objectKey string, exp
 		}
 	}
 
-	log.Printf("Gerando Presigned Delete URL para o objeto: %s no bucket: %s com expiração de: %s", objectKey, bucketName, expiration)
-
 	params := &s3.DeleteObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
 	}
 
 	if expiration <= 0 {
-		log.Printf("Valor de expiração menor ou igual a zero, utilizando padrão de 5 minutos")
 		expiration = 5 * time.Minute
 	}
 
@@ -156,14 +146,11 @@ func (client *Client) DeleteBucketPreSignedURL(bucketName string, expiration tim
 		}
 	}
 
-	log.Printf("Gerando Presigned Delete URL para o bucket: %s com expiração de: %s", bucketName, expiration)
-
 	params := &s3.DeleteBucketInput{
 		Bucket: aws.String(bucketName),
 	}
 
 	if expiration <= 0 {
-		log.Printf("Valor de expiração menor ou igual a zero, utilizando padrão de 5 minutos")
 		expiration = 5 * time.Minute
 	}
 
@@ -199,15 +186,12 @@ func (client *Client) PostPreSignedURL(bucketName, objectKey string, expiration 
 		}
 	}
 
-	log.Printf("Gerando Presigned POST URL para o objeto: %s no bucket: %s com expiração de: %s", objectKey, bucketName, expiration)
-
 	params := &s3.PutObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
 	}
 
 	if expiration <= 0 {
-		log.Printf("Valor de expiração menor ou igual a zero, utilizando padrão de 5 minutos")
 		expiration = 5 * time.Minute
 	}
 

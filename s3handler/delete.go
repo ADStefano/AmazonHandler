@@ -3,7 +3,6 @@ package s3handler
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -22,8 +21,6 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string, ctx cont
 			Err:       ErrEmptyParam,
 		}
 	}
-
-	log.Printf("Deletando objeto(s) %s do bucket %s \n", objKey, bucketName)
 
 	var objectIds []types.ObjectIdentifier
 	for _, key := range objKey {
@@ -49,12 +46,6 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string, ctx cont
 
 	if len(output.Errors) > 0 {
 
-		log.Printf("Erro ao deletar objeto(s) do bucket: %s", bucketName)
-
-		for _, outErr := range output.Errors {
-			log.Printf("%s: %s\n", *outErr.Key, *outErr.Message)
-		}
-
 		err = errors.New(*output.Errors[0].Message)
 
 		return false, &S3Error{
@@ -71,7 +62,6 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string, ctx cont
 
 		err = client.ObjNotExistWaiter().Wait(ctx, input, time.Minute)
 		if err != nil {
-			log.Printf("Erro ao aguardar o objeto ser deletado: %s", *delObj.Key)
 			return false, &S3Error{
 				Operation: "DeleteObjects",
 				Bucket:    bucketName,
@@ -79,8 +69,6 @@ func (client *Client) DeleteObjects(objKey []string, bucketName string, ctx cont
 				Err:       ErrWaiterTimeout,
 			}
 
-		} else {
-			log.Printf("Objeto %s deletado com sucesso do bucket %s", *delObj.Key, bucketName)
 		}
 	}
 
@@ -99,11 +87,8 @@ func (client *Client) EmptyBucket(bucketName string, ctx context.Context) (bool,
 		}
 	}
 
-	log.Printf("Esvaziando bucket %s", bucketName)
-
 	objectsList, err := client.ListObjects(bucketName, "", 1000, ctx)
 	if err != nil {
-		log.Printf("Erro ao buscar os objetos do bucket: %s", bucketName)
 		return false, &S3Error{
 			Operation: "EmptyBucket",
 			Bucket:    bucketName,
@@ -120,7 +105,6 @@ func (client *Client) EmptyBucket(bucketName string, ctx context.Context) (bool,
 
 	_, err = client.DeleteObjects(deleteList, bucketName, ctx)
 	if err != nil {
-		log.Printf("Erro ao esvaziar bucket: %s, erro ao deletar objetos: %s", bucketName, deleteList)
 		return false, &S3Error{
 			Operation: "EmptyBucket",
 			Bucket:    bucketName,
@@ -128,8 +112,6 @@ func (client *Client) EmptyBucket(bucketName string, ctx context.Context) (bool,
 			Err:       err,
 		}
 	}
-
-	log.Printf("Objetos deletados do bucket: %s com sucesso", bucketName)
 
 	return true, nil
 }

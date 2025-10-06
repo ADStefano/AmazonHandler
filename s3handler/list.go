@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -11,8 +10,6 @@ import (
 
 // ListBuckets lista os buckets do usuário autenticado
 func (client *Client) ListBuckets(prefix string, ctx context.Context) ([]types.Bucket, error) {
-
-	log.Printf("Buscando buckets...")
 
 	var buckets []types.Bucket
 
@@ -40,29 +37,20 @@ func (client *Client) ListBuckets(prefix string, ctx context.Context) ([]types.B
 		buckets = append(buckets, output.Buckets...)
 	}
 
-	log.Printf("Total de buckets encontrados: %d", len(buckets))
-
 	return buckets, nil
 }
 
-// ListObjects lista os objetos dentro de um bucket
+// ListObjects lista os objetos dentro de um bucket, caso o maxKeys seja menor que 1, o valor padrão será 1000
 func (client *Client) ListObjects(bucketName, prefix string, maxKeys int32, ctx context.Context) ([]types.Object, error) {
-	log.Printf("Buscando objetos no bucket %s", bucketName)
 
 	if bucketName == "" {
-		log.Printf("Nome do bucket não pode ser vazio")
 		return nil, ErrEmptyParam
 	}
 
 	var objects []types.Object
 
 	if maxKeys < 1 {
-		log.Printf("Parâmetro maxKeys menor que o permitido, utilizando default de 1000")
 		maxKeys = 1000
-	}
-
-	if prefix != "" {
-		log.Printf("Utilizando prefixo: %s", prefix)
 	}
 
 	params := &s3.ListObjectsV2Input{
