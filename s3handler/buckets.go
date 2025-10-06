@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -22,8 +21,6 @@ func (client *Client) CreateBucket(bucketName string, ctx context.Context) (bool
 		}
 	}
 
-	log.Printf("Criando bucket: %s\n", bucketName)
-
 	params := &s3.CreateBucketInput{
 		Bucket: aws.String(bucketName),
 		CreateBucketConfiguration: &types.CreateBucketConfiguration{
@@ -40,7 +37,7 @@ func (client *Client) CreateBucket(bucketName string, ctx context.Context) (bool
 			Err:       parsedErr,
 		}
 	}
-	log.Printf("Bucket %s criado com sucesso", bucketName)
+
 	return true, nil
 }
 
@@ -55,8 +52,6 @@ func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool
 			Err:       ErrEmptyParam,
 		}
 	}
-
-	log.Printf("Deletando bucket %s\n", bucketName)
 
 	params := &s3.DeleteBucketInput{
 		Bucket: aws.String(bucketName),
@@ -78,7 +73,6 @@ func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool
 
 		err = client.BucketNotExistsWaiter().Wait(context.TODO(), headBucketParams, time.Minute)
 		if err != nil {
-			log.Printf("Erro ao esperar bucket %s ser deletado", bucketName)
 			return false, &S3Error{
 				Operation: "DeleteBucket",
 				Bucket:    bucketName,
@@ -88,6 +82,5 @@ func (client *Client) DeleteBucket(bucketName string, ctx context.Context) (bool
 		}
 	}
 
-	log.Printf("Bucket %s deletado com sucesso", bucketName)
 	return true, nil
 }

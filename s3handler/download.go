@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -21,8 +20,6 @@ func (client *Client) DownloadS3(bucketName, objectKey string, ctx context.Conte
 		}
 	}
 
-	log.Printf("Baixando objeto: %s do bucket: %s", objectKey, bucketName)
-
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
@@ -31,8 +28,6 @@ func (client *Client) DownloadS3(bucketName, objectKey string, ctx context.Conte
 	output, err := client.S3Client.GetObject(ctx, input)
 
 	if err != nil {
-
-		log.Printf("Erro: %s", err)
 
 		parsedErr := ParseError(err)
 

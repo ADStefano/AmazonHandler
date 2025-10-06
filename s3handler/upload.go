@@ -2,7 +2,6 @@ package s3handler
 
 import (
 	"context"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -14,7 +13,6 @@ import (
 func (client *Client) UploadS3(bucketName, prefix, path string, ctx context.Context) (bool, error) {
 
 	if bucketName == "" || path == "" {
-		log.Printf("Nome do bucket ou caminho do arquivo vazio")
 		return false, &S3Error{
 			Operation: "upload",
 			Bucket:    bucketName,
@@ -25,12 +23,16 @@ func (client *Client) UploadS3(bucketName, prefix, path string, ctx context.Cont
 	}
 
 	filename := filepath.Base(path)
-	log.Printf("Fazendo upload do arquivo: %s para o bucket: %s", filename, bucketName)
 
 	file, err := os.Open(path)
 	if err != nil {
-		log.Printf("Erro ao abrir arquivo: %s", filename)
-		return false, err
+		return false, &S3Error{
+			Operation: "upload",
+			Bucket:    bucketName,
+			Object:    path,
+			Message:   "FileOpenError",
+			Err:       err,
+		}
 	}
 	defer file.Close()
 
@@ -49,8 +51,6 @@ func (client *Client) UploadS3(bucketName, prefix, path string, ctx context.Cont
 	if err != nil {
 
 		parsedErr := ParseError(err)
-
-		log.Printf("Erro ao fazer upload do objeto: %s, para o bucket: %s, prefixo: %s, erro: %s", filename, bucketName, prefix, err)
 
 		return false, &S3Error{
 			Operation: "upload",
