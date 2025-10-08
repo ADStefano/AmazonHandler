@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"amazon-handler/s3handler"
+	"github.com/ADStefano/AmazonHandler/s3handler"
 	"context"
 	"time"
 

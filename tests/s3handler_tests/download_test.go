@@ -1,7 +1,7 @@
 package s3handler_test
 
 import (
-	"amazon-handler/s3handler"
+	"github.com/ADStefano/AmazonHandler/s3handler"
 	"context"
 	"errors"
 	"testing"

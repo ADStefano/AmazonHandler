@@ -1,8 +1,8 @@
 package s3handler_test
 
 import (
-	"amazon-handler/internal/mocks/s3handler_mocks"
-	"amazon-handler/s3handler"
+	"github.com/ADStefano/AmazonHandler/internal/mocks/s3handler_mocks"
+	"github.com/ADStefano/AmazonHandler/s3handler"
 	"context"
 	"errors"
 	"testing"
