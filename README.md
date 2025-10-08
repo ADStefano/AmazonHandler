@@ -34,7 +34,10 @@ No arquivo main.go mostra como utilizar o projeto de forma simples, com algumas 
 ## Testes:
 O projeto possui testes unitários, incluindo mocks do serviço da Amazon S3.
 Para rodar os testes:
-- ``` go test -v ./... ```
+- ``` go test -v -coverpkg=./s3handler -coverprofile=cover.out ./tests/s3handler_tests ```
+
+Para transformar o cover.out em html:
+- ``` go tool cover -html=cover.out -o cover.html ``` 
 
 ## Roadmap:
 - [x] Implementar interface do serviço da AWS S3
@@ -63,11 +66,11 @@ Para rodar os testes:
 
 - [x] Implementar busca por prefixo ao listar objetos 
 
-- [ ] Melhorar/Remover logs
+- [x] Melhorar/Remover logs
 
 - [x] Aumentar a cobertura dos testes unitários
 
-- [ ] Ajustar go mod para importar como package em outros projetos
+- [x] Ajustar go mod para importar como package em outros projetos
 
 ## Autor:
 Me chamo Ângelo Pedersen Di Stefano, sou desenvolvedor de software com foco em backend nas linguagens Go, Python e Java.

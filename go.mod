@@ -1,4 +1,4 @@
-module amazon-handler
+module github.com/ADStefano/AmazonHandler
 
 go 1.22.2
 
